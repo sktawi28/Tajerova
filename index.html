@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tajerova</title>
+    
+    <!-- Tailwind CSS (للتصميم) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (للأيقونات) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* إخفاء الصفحات غير النشطة */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تنسيقات الطباعة */
+        @media print {
+            .print-hidden { display: none !important; }
+            .print-full { margin: 0; padding: 0; width: 100%; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800" style="font-family: system-ui, -apple-system, sans-serif;">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <!-- القائمة الجانبية -->
+        <aside class="w-full md:w-64 bg-white border-l border-gray-200 shadow-sm md:fixed md:h-full z-10 print-hidden">
+            <div class="p-6 flex items-center gap-3 border-b border-gray-100">
+                <div class="bg-emerald-600 text-white p-2 rounded-lg">
+                    <i data-lucide="calculator" class="w-6 h-6"></i>
+                </div>
+                <h1 class="text-xl font-bold text-emerald-800">Tajerova</h1>
+            </div>
+            <nav class="p-4 flex flex-row md:flex-col gap-2 overflow-x-auto">
+                <button onclick="switchView('dashboard')" class="nav-btn active flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal bg-emerald-50 text-emerald-700 font-semibold" data-target="dashboard">
+                    <i data-lucide="home" class="w-5 h-5"></i> <span>الرئيسية</span>
+                </button>
+                <button onclick="switchView('add')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="add">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> <span>إضافة شراء</span>
+                </button>
+                <button onclick="switchView('list')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="list">
+                    <i data-lucide="list" class="w-5 h-5"></i> <span>المشتريات</span>
+                </button>
+                <button onclick="switchView('add-sale')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="add-sale">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i> <span>تسجيل بيع</span>
+                </button>
+                <button onclick="switchView('sales-list')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="sales-list">
+                    <i data-lucide="receipt" class="w-5 h-5"></i> <span>سجل المبيعات</span>
+                </button>
+                <button onclick="switchView('reports')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="reports">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i> <span>التقارير</span>
+                </button>
+                <button onclick="switchView('settings')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="settings">
+                    <i data-lucide="settings" class="w-5 h-5"></i> <span>الإعدادات</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="flex-1 md:mr-64 p-4 md:p-8">
+            
+            <!-- 1. الرئيسية -->
+            <div id="view-dashboard" class="view-section active space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">نظرة عامة</h2>
+                    <button onclick="switchView('add')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        <span class="hidden sm:inline">عملية شراء جديدة</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="p-4 rounded-xl bg-blue-50 text-blue-500"><i data-lucide="dollar-sign"></i></div>
+                        <div><p class="text-sm text-gray-500 mb-1">إجمالي رأس المال</p><p id="dash-capital" class="text-2xl font-bold text-gray-800">0.00 ريال</p></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="p-4 rounded-xl bg-emerald-50 text-emerald-500"><i data-lucide="trending-up"></i></div>
+                        <div><p class="text-sm text-gray-500 mb-1">الأرباح المتوقعة</p><p id="dash-profit" class="text-2xl font-bold text-gray-800">0.00 ريال</p></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="p-4 rounded-xl bg-purple-50 text-purple-500"><i data-lucide="user"></i></div>
+                        <div><p class="text-sm text-gray-500 mb-1">عدد التجار</p><p id="dash-merchants" class="text-2xl font-bold text-gray-800">0</p></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="p-4 rounded-xl bg-orange-50 text-orange-500"><i data-lucide="package"></i></div>
+                        <div><p class="text-sm text-gray-500 mb-1">إجمالي المنتجات</p><p id="dash-products" class="text-2xl font-bold text-gray-800">0</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-8">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">أحدث المشتريات</h3>
+                        <button onclick="switchView('list')" class="text-emerald-600 text-sm hover:underline">عرض الكل</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-500 text-sm">
+                                <tr>
+                                    <th class="p-4 font-medium">المنتج</th>
+                                    <th class="p-4 font-medium">التاجر</th>
+                                    <th class="p-4 font-medium">الكمية</th>
+                                    <th class="p-4 font-medium">إجمالي الربح</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-recent-list" class="divide-y divide-gray-100 text-gray-700">
+                                <!-- يتم الإضافة ديناميكياً -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. إضافة وتعديل -->
+            <div id="view-add" class="view-section max-w-4xl mx-auto space-y-6">
+                <div class="flex items-center gap-4">
+                    <button onclick="switchView('list')" class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                    <h2 id="form-title" class="text-2xl font-bold text-gray-800">إضافة عملية شراء جديدة</h2>
+                </div>
+
+                <form id="purchase-form" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    
+                    <div class="p-6 md:p-8 space-y-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-emerald-700 flex items-center gap-2 mb-4">
+                            <span class="bg-emerald-100 w-8 h-8 rounded-full flex items-center justify-center">1</span> بيانات التاجر والمنتج
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">اسم التاجر</label>
+                                <input type="text" id="form-merchantName" placeholder="مثال: مؤسسة الهدى" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">موقع التاجر / الرابط</label>
+                                <input type="text" id="form-location" placeholder="مثال: جدة - سوق الصواريخ" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">اسم المنتج *</label>
+                                <input type="text" id="form-productName" required placeholder="مثال: سماعات بلوتوث M10" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 md:p-8 space-y-6 border-b border-gray-100 bg-gray-50">
+                        <h3 class="text-lg font-semibold text-emerald-700 flex items-center gap-2 mb-4">
+                            <span class="bg-emerald-100 w-8 h-8 rounded-full flex items-center justify-center">2</span> التكاليف
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">الكمية *</label>
+                                <input type="number" id="form-quantity" required min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">سعر الجملة الإجمالي *</label>
+                                <input type="number" id="form-wholesalePrice" required min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">تكلفة الشحن (اختياري)</label>
+                                <input type="number" id="form-shippingCost" min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">التغليف (اختياري)</label>
+                                <input type="number" id="form-packagingCost" min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div id="form-cost-container" class="hidden bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex justify-between items-center mt-4">
+                            <span class="text-emerald-800 font-medium">💰 تكلفة القطعة الواحدة:</span>
+                            <span id="form-costPerItem-label" class="text-2xl font-bold text-emerald-700">0.00 ريال</span>
+                        </div>
+                    </div>
+
+                    <div class="p-6 md:p-8 space-y-6">
+                        <h3 class="text-lg font-semibold text-emerald-700 flex items-center gap-2 mb-4">
+                            <span class="bg-emerald-100 w-8 h-8 rounded-full flex items-center justify-center">3</span> التسعير والربح
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                                <label class="block text-sm font-medium text-blue-800 mb-2 flex justify-between">
+                                    <span>نسبة الربح المستهدفة (%)</span>
+                                    <span id="form-targetMargin-label" class="font-bold text-lg">30%</span>
+                                </label>
+                                <input type="range" id="form-targetMargin" min="0" max="200" value="30" class="w-full accent-blue-600 mb-4">
+                                <div class="flex justify-between items-center text-sm mb-4">
+                                    <span class="text-gray-600">السعر المقترح للبيع:</span>
+                                    <span id="form-suggestedPrice-label" class="font-bold text-blue-800 text-lg">0.00 ريال</span>
+                                </div>
+                                <button type="button" onclick="applySuggestedPrice()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm">
+                                    اعتماد السعر المقترح
+                                </button>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع النهائي (للقطعة)</label>
+                                <input type="number" id="form-sellingPrice" min="0" step="0.01" placeholder="أدخل سعر البيع هنا" class="w-full p-4 border-2 border-emerald-200 rounded-xl focus:ring-0 focus:border-emerald-500 outline-none text-lg font-bold">
+                                
+                                <div id="form-profit-container" class="hidden mt-4 space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">الربح في القطعة الواحدة:</span>
+                                        <span id="form-profitPerItem-label" class="font-bold">0.00 ريال</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">إجمالي الربح المتوقع:</span>
+                                        <span id="form-totalProfit-label" class="font-bold text-lg">0.00 ريال</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 border-t border-gray-100 flex flex-wrap justify-end gap-3">
+                        <button type="button" onclick="switchView('list')" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-100 font-medium transition-colors">إلغاء</button>
+                        
+                        <!-- زر حفظ وإضافة منتج آخر (جديد) -->
+                        <button type="button" id="btn-save-another" onclick="saveAndAddAnother()" class="px-6 py-3 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold transition-colors shadow-sm flex items-center gap-2">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            <span id="btn-save-another-text">حفظ وإضافة منتج آخر</span>
+                        </button>
+                        
+                        <button type="submit" class="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-md flex items-center gap-2">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                            <span id="form-submit-btn">حفظ عملية الشراء</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 3. المشتريات -->
+            <div id="view-list" class="view-section space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800">سجل المشتريات</h2>
+                    <div class="relative w-full md:w-96">
+                        <input type="text" id="list-search" placeholder="ابحث باسم المنتج، التاجر، أو الموقع..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <i data-lucide="search" class="absolute left-3 top-3.5 text-gray-400 w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4 font-semibold">المنتج</th>
+                                    <th class="p-4 font-semibold">التاجر</th>
+                                    <th class="p-4 font-semibold text-center">الكمية</th>
+                                    <th class="p-4 font-semibold text-center">التكلفة/قطعة</th>
+                                    <th class="p-4 font-semibold text-center">إجمالي الربح</th>
+                                    <th class="p-4 font-semibold text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="list-tbody" class="divide-y divide-gray-100">
+                                <!-- تملأ ديناميكيا -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. تفاصيل المنتج -->
+            <div id="view-details" class="view-section max-w-3xl mx-auto space-y-6">
+                <div class="flex justify-between items-center print-hidden">
+                    <div class="flex items-center gap-4">
+                        <button onclick="switchView('list')" class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                        <h2 class="text-2xl font-bold text-gray-800">تفاصيل المنتج</h2>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="detail-edit-btn" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+                            <i data-lucide="edit" class="w-4 h-4"></i> تعديل
+                        </button>
+                        <button id="detail-delete-btn" class="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> حذف
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-8 bg-emerald-50 border-b border-emerald-100 flex items-start justify-between">
+                        <div>
+                            <h1 id="detail-title" class="text-3xl font-bold text-emerald-900 mb-2">-</h1>
+                            <div class="flex items-center gap-4 text-emerald-700">
+                                <span id="detail-merchant" class="flex items-center gap-1"></span>
+                                <span id="detail-location" class="flex items-center gap-1"></span>
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm text-emerald-600 mb-1">الكمية</p>
+                            <p class="text-3xl font-black text-emerald-800"><span id="detail-qty">0</span> <span class="text-lg font-normal">قطعة</span></p>
+                        </div>
+                    </div>
+
+                    <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">تفاصيل التكلفة</h3>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">سعر الجملة</span><span id="detail-wholesale" class="font-semibold text-gray-800">0.00</span></div>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">تكلفة الشحن</span><span id="detail-shipping" class="font-semibold text-gray-800">0.00</span></div>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">تكلفة التغليف</span><span id="detail-packaging" class="font-semibold text-gray-800">0.00</span></div>
+                            <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
+                                <span class="text-sm font-bold text-gray-700">التكلفة للقطعة الواحدة</span>
+                                <span id="detail-costPerItem" class="font-semibold text-orange-600">0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">تفاصيل الأرباح</h3>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">سعر البيع للقطعة</span><span id="detail-sellingPrice" class="font-semibold text-gray-800">0.00</span></div>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">الربح في القطعة</span><span id="detail-profitPerItem" class="font-semibold">0.00</span></div>
+                            <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
+                                <span class="text-sm font-bold text-gray-700">إجمالي الربح المتوقع</span>
+                                <span id="detail-totalProfit" class="font-black text-xl">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ميزة تسجيل المبيعات (جديد) -->
+            <div id="view-add-sale" class="view-section max-w-4xl mx-auto space-y-6">
+                <div class="flex items-center gap-4">
+                    <button onclick="switchView('sales-list')" class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                    <h2 class="text-2xl font-bold text-gray-800">تسجيل عملية بيع جديدة</h2>
+                </div>
+                <form id="sale-form" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">اختر المنتج *</label>
+                            <select id="sale-product" required class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                <option value="">-- اختر المنتج من المخزون --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المباعة * <span id="sale-available-qty" class="text-emerald-600 font-bold text-xs ml-2"></span></label>
+                            <input type="number" id="sale-qty" required min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع للقطعة *</label>
+                            <input type="number" id="sale-price" required min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                    </div>
+                    
+                    <div id="sale-summary" class="hidden bg-emerald-50 border border-emerald-100 rounded-xl p-4 mt-4 space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">التكلفة للقطعة:</span>
+                            <span id="sale-cost-label" class="font-bold text-gray-800">0.00 ريال</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">الربح للقطعة الواحدة:</span>
+                            <span id="sale-profit-per-item-label" class="font-bold">0.00 ريال</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-emerald-200">
+                            <span class="text-gray-800 font-bold">إجمالي الربح من هذه البيعة:</span>
+                            <span id="sale-total-profit-label" class="text-xl font-black text-emerald-700">0.00 ريال</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="submit" class="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-md flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i> حفظ المبيعات
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- سجل المبيعات (جديد) -->
+            <div id="view-sales-list" class="view-section space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">سجل المبيعات</h2>
+                    <button onclick="switchView('add-sale')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                        <i data-lucide="plus" class="w-5 h-5"></i> إضافة بيع
+                    </button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4 font-semibold">التاريخ</th>
+                                    <th class="p-4 font-semibold">المنتج</th>
+                                    <th class="p-4 font-semibold text-center">الكمية المباعة</th>
+                                    <th class="p-4 font-semibold text-center">سعر البيع</th>
+                                    <th class="p-4 font-semibold text-center">إجمالي الربح</th>
+                                    <th class="p-4 font-semibold text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-tbody" class="divide-y divide-gray-100">
+                                <!-- تملأ ديناميكيا -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. التقارير -->
+            <div id="view-reports" class="view-section space-y-6">
+                <div class="flex justify-between items-center print-hidden">
+                    <h2 class="text-2xl font-bold text-gray-800">التقارير والإحصائيات</h2>
+                    <button onclick="window.print()" class="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> طباعة التقرير (PDF)
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 flex flex-col justify-center items-center text-center">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4"><i data-lucide="dollar-sign" class="w-8 h-8"></i></div>
+                        <p class="text-gray-500 mb-2">إجمالي رأس المال المستخدم</p>
+                        <p id="rep-capital" class="text-3xl font-black text-gray-800">0.00 ريال</p>
+                    </div>
+                    
+                    <div class="bg-emerald-600 p-6 rounded-2xl shadow-sm text-white flex flex-col justify-center items-center text-center">
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4"><i data-lucide="trending-up" class="w-8 h-8"></i></div>
+                        <p class="text-emerald-100 mb-2">إجمالي الأرباح المتوقعة</p>
+                        <p id="rep-profit" class="text-3xl font-black">0.00 ريال</p>
+                    </div>
+
+                    <!-- إحصائيات المبيعات الفعلية (جديد) -->
+                    <div class="bg-green-50 p-6 rounded-2xl shadow-sm border border-green-200 flex flex-col justify-center items-center text-center md:col-span-2">
+                        <div class="w-16 h-16 bg-green-200 text-green-700 rounded-full flex items-center justify-center mb-4"><i data-lucide="check-circle" class="w-8 h-8"></i></div>
+                        <p class="text-green-800 mb-2 font-bold">الأرباح الفعلية المحققة (من المبيعات)</p>
+                        <p id="rep-actual-profit" class="text-4xl font-black text-green-700">0.00 ريال</p>
+                        <p id="rep-actual-sales-revenue" class="text-sm text-green-600 mt-2">إجمالي إيرادات المبيعات: 0.00 ريال</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-gray-500 mb-4 flex items-center gap-2"><i data-lucide="user" class="w-5 h-5"></i> أكثر تاجر تم التعامل معه</h3>
+                        <p id="rep-merchant" class="text-2xl font-bold text-gray-800">-</p>
+                        <p id="rep-merchant-count" class="text-sm text-emerald-600 mt-2"></p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-gray-500 mb-4 flex items-center gap-2"><i data-lucide="package" class="w-5 h-5"></i> أكثر منتج ربحاً</h3>
+                        <p id="rep-product" class="text-2xl font-bold text-gray-800">-</p>
+                        <p id="rep-product-profit" class="text-sm text-emerald-600 mt-2"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. الإعدادات -->
+            <div id="view-settings" class="view-section max-w-2xl mx-auto space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">الإعدادات والبيانات</h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">تصدير التقارير</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="exportCSV()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl transition-colors">
+                                <i data-lucide="download" class="w-5 h-5"></i> تصدير كـ Excel (CSV)
+                            </button>
+                            <button onclick="window.print()" class="flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white px-5 py-3 rounded-xl transition-colors">
+                                <i data-lucide="file-text" class="w-5 h-5"></i> حفظ كـ PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">النسخ الاحتياطي (حفظ محلي)</h3>
+                        <p class="text-sm text-gray-500 mb-4">البيانات محفوظة داخل متصفحك فقط. ننصح بأخذ نسخة احتياطية بشكل دوري.</p>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="backupJSON()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition-colors">
+                                <i data-lucide="database" class="w-5 h-5"></i> أخذ نسخة احتياطية
+                            </button>
+                            <label class="flex items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl transition-colors cursor-pointer">
+                                <i data-lucide="upload" class="w-5 h-5"></i> استعادة نسخة
+                                <input type="file" id="restore-file" accept=".json" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 mt-8 border-t border-red-100">
+                        <button onclick="clearAllData()" class="flex items-center gap-2 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors w-full justify-center border border-red-200">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i> مسح جميع البيانات نهائياً
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- كود الجافاسكربت الخاص بالتطبيق -->
+    <script>
+        // تهيئة الأيقونات
+        lucide.createIcons();
+
+        // أيقونة الريال السعودي
+        const riyalIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.14 1256.39" style="width:1em; height:1em; vertical-align:-0.1em; fill:currentColor;" role="img" aria-label="Saudi Riyal"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg>`;
+
+        function formatRiyal(amount) {
+            return `<span style="display:inline-flex; align-items:center; gap:0.25rem; direction:ltr; justify-content:flex-end;">${riyalIcon} <span>${Number(amount).toFixed(2)}</span></span>`;
+        }
+
+        // البيانات
+        let purchases = JSON.parse(localStorage.getItem('merchant_purchases')) || [];
+        let sales = JSON.parse(localStorage.getItem('merchant_sales')) || [];
+        let editingId = null;
+        let selectedPurchase = null;
+
+        // الحفظ التلقائي
+        function savePurchases() {
+            localStorage.setItem('merchant_purchases', JSON.stringify(purchases));
+        }
+        function saveSales() {
+            localStorage.setItem('merchant_sales', JSON.stringify(sales));
+        }
+
+        // التنقل بين الصفحات
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.target === viewId) {
+                    btn.classList.add('bg-emerald-50', 'text-emerald-700', 'font-semibold');
+                    btn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+                } else {
+                    btn.classList.remove('bg-emerald-50', 'text-emerald-700', 'font-semibold');
+                    btn.classList.add('text-gray-500', 'hover:bg-gray-100');
+                }
+            });
+
+            if(viewId === 'dashboard') renderDashboard();
+            if(viewId === 'list') renderList();
+            if(viewId === 'reports') renderReports();
+            if(viewId === 'sales-list') renderSalesList();
+            if(viewId === 'add-sale') renderAddSale();
+            if(viewId === 'add') {
+                const btnAnother = document.getElementById('btn-save-another');
+                if(!editingId) {
+                    document.getElementById('purchase-form').reset();
+                    document.getElementById('form-targetMargin').value = '30';
+                    document.getElementById('form-title').textContent = 'إضافة عملية شراء جديدة';
+                    document.getElementById('form-submit-btn').textContent = 'حفظ عملية الشراء';
+                    if(btnAnother) btnAnother.classList.remove('hidden');
+                } else {
+                    document.getElementById('form-title').textContent = 'تعديل بيانات المنتج';
+                    document.getElementById('form-submit-btn').textContent = 'تحديث البيانات';
+                    if(btnAnother) btnAnother.classList.add('hidden'); // إخفاء زر التكرار عند التعديل
+                }
+                calculateForm();
+            }
+
+            lucide.createIcons();
+        }
+
+        // العمليات الحسابية في نموذج الإضافة
+        function calculateForm() {
+            const qty = Number(document.getElementById('form-quantity').value) || 0;
+            const wholesale = Number(document.getElementById('form-wholesalePrice').value) || 0;
+            const shipping = Number(document.getElementById('form-shippingCost').value) || 0;
+            const packaging = Number(document.getElementById('form-packagingCost').value) || 0;
+            const targetMargin = Number(document.getElementById('form-targetMargin').value) || 0;
+            const sellingPrice = Number(document.getElementById('form-sellingPrice').value) || 0;
+
+            const totalCost = wholesale + shipping + packaging;
+            const costPerItem = qty > 0 ? totalCost / qty : 0;
+            const suggestedPrice = costPerItem + (costPerItem * (targetMargin / 100));
+            const profitPerItem = sellingPrice > 0 ? sellingPrice - costPerItem : 0;
+            const totalProfit = profitPerItem * qty;
+
+            document.getElementById('form-targetMargin-label').textContent = targetMargin + '%';
+            document.getElementById('form-suggestedPrice-label').innerHTML = formatRiyal(suggestedPrice);
+
+            const costContainer = document.getElementById('form-cost-container');
+            if (qty > 0) {
+                costContainer.classList.remove('hidden');
+                document.getElementById('form-costPerItem-label').innerHTML = formatRiyal(costPerItem);
+            } else {
+                costContainer.classList.add('hidden');
+            }
+
+            const profitContainer = document.getElementById('form-profit-container');
+            if (sellingPrice > 0) {
+                profitContainer.classList.remove('hidden');
+                const profitPerItemLabel = document.getElementById('form-profitPerItem-label');
+                profitPerItemLabel.innerHTML = formatRiyal(profitPerItem);
+                profitPerItemLabel.className = `font-bold ${profitPerItem >= 0 ? 'text-emerald-600' : 'text-red-500'}`;
+
+                const totalProfitLabel = document.getElementById('form-totalProfit-label');
+                totalProfitLabel.innerHTML = formatRiyal(totalProfit);
+                totalProfitLabel.className = `font-bold text-lg ${totalProfit >= 0 ? 'text-emerald-600' : 'text-red-500'}`;
+            } else {
+                profitContainer.classList.add('hidden');
+            }
+
+            return { costPerItem, profitPerItem, totalProfit, suggestedPrice };
+        }
+
+        // ربط أحداث الإدخال للحساب الفوري
+        ['form-quantity', 'form-wholesalePrice', 'form-shippingCost', 'form-packagingCost', 'form-targetMargin', 'form-sellingPrice'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateForm);
+        });
+
+        // اعتماد السعر المقترح
+        window.applySuggestedPrice = function() {
+            const calcs = calculateForm();
+            document.getElementById('form-sellingPrice').value = calcs.suggestedPrice.toFixed(2);
+            calculateForm();
+        };
+
+        // دالة حفظ البيانات الأساسية (مفصولة لتستخدم في الزرين)
+        function performPurchaseSave() {
+            const calcs = calculateForm();
+
+            const formData = {
+                id: editingId || Date.now().toString(),
+                date: editingId ? (purchases.find(p=>p.id===editingId)?.date || new Date().toISOString()) : new Date().toISOString(),
+                merchantName: document.getElementById('form-merchantName').value,
+                location: document.getElementById('form-location').value,
+                productName: document.getElementById('form-productName').value,
+                quantity: document.getElementById('form-quantity').value,
+                wholesalePrice: document.getElementById('form-wholesalePrice').value,
+                shippingCost: document.getElementById('form-shippingCost').value,
+                packagingCost: document.getElementById('form-packagingCost').value,
+                targetMargin: document.getElementById('form-targetMargin').value,
+                sellingPrice: document.getElementById('form-sellingPrice').value,
+                costPerItem: calcs.costPerItem,
+                profitPerItem: calcs.profitPerItem,
+                totalProfit: calcs.totalProfit
+            };
+
+            if(editingId) {
+                const index = purchases.findIndex(p => p.id === editingId);
+                if(index !== -1) purchases[index] = formData;
+            } else {
+                purchases.unshift(formData);
+            }
+
+            savePurchases();
+        }
+
+        // حفظ الشراء العادي (والخروج)
+        document.getElementById('purchase-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            performPurchaseSave();
+            editingId = null;
+            switchView('list');
+        });
+
+        // حفظ وإضافة منتج آخر لنفس التاجر (ميزة جديدة)
+        window.saveAndAddAnother = function() {
+            const form = document.getElementById('purchase-form');
+            if(!form.checkValidity()) {
+                form.reportValidity(); // إظهار رسائل الخطأ إذا كانت الحقول فارغة
+                return;
+            }
+
+            performPurchaseSave();
+            editingId = null;
+
+            // تصفير حقول المنتج مع إبقاء بيانات التاجر
+            document.getElementById('form-productName').value = '';
+            document.getElementById('form-quantity').value = '';
+            document.getElementById('form-wholesalePrice').value = '';
+            document.getElementById('form-shippingCost').value = ''; // تصفير الشحن لأنه عادة خاص بالشحنة وليس مكرر
+            document.getElementById('form-packagingCost').value = '';
+            document.getElementById('form-sellingPrice').value = '';
+            
+            calculateForm(); // إعادة الحسابات للتحديث UI
+
+            // إظهار رسالة نجاح مؤقتة في الزر نفسه
+            const btnText = document.getElementById('btn-save-another-text');
+            const originalText = btnText.innerText;
+            btnText.innerText = "تم الحفظ بنجاح!";
+            setTimeout(() => {
+                btnText.innerText = originalText;
+            }, 2000);
+        };
+
+        // عرض القائمة
+        function renderList() {
+            const term = document.getElementById('list-search').value.toLowerCase();
+            const filtered = purchases.filter(p => 
+                (p.productName || '').toLowerCase().includes(term) ||
+                (p.merchantName || '').toLowerCase().includes(term) ||
+                (p.location || '').toLowerCase().includes(term)
+            );
+
+            const tbody = document.getElementById('list-tbody');
+            if(filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد نتائج مطابقة لبحثك.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(p => `
+                <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                    <td class="p-4 font-medium text-gray-800">
+                        <button onclick="viewDetails('${p.id}')" class="hover:text-emerald-600 text-right">${p.productName}</button>
+                    </td>
+                    <td class="p-4 text-gray-500">${p.merchantName || '-'}</td>
+                    <td class="p-4 text-center">${p.quantity}</td>
+                    <td class="p-4 text-center text-orange-600">${formatRiyal(p.costPerItem)}</td>
+                    <td class="p-4 text-center font-bold text-emerald-600">${formatRiyal(p.totalProfit)}</td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <button onclick="viewDetails('${p.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg" title="التفاصيل"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        <button onclick="editPurchase('${p.id}')" class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg" title="تعديل"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                        <button onclick="deletePurchase('${p.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="حذف"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+        document.getElementById('list-search').addEventListener('input', renderList);
+
+        // -- منطق المبيعات (جديد) --
+
+        function getAvailableQuantity(purchaseId) {
+            const purchase = purchases.find(p => p.id === purchaseId);
+            if(!purchase) return 0;
+            const soldQty = sales.filter(s => s.purchaseId === purchaseId).reduce((sum, s) => sum + Number(s.quantity), 0);
+            return Number(purchase.quantity) - soldQty;
+        }
+
+        function renderAddSale() {
+            const select = document.getElementById('sale-product');
+            select.innerHTML = '<option value="">-- اختر المنتج من المخزون --</option>' + 
+                purchases.map(p => {
+                    const available = getAvailableQuantity(p.id);
+                    return `<option value="${p.id}" ${available <= 0 ? 'disabled' : ''}>${p.productName} (متاح: ${available})</option>`;
+                }).join('');
+            
+            document.getElementById('sale-form').reset();
+            document.getElementById('sale-summary').classList.add('hidden');
+            document.getElementById('sale-available-qty').textContent = '';
+        }
+
+        document.getElementById('sale-product').addEventListener('change', function(e) {
+            const purchaseId = e.target.value;
+            const purchase = purchases.find(p => p.id === purchaseId);
+            if(purchase) {
+                const available = getAvailableQuantity(purchaseId);
+                document.getElementById('sale-available-qty').textContent = `(المتاح: ${available} قطعة)`;
+                document.getElementById('sale-qty').max = available;
+                document.getElementById('sale-price').value = purchase.sellingPrice || '';
+                calculateSale();
+            } else {
+                document.getElementById('sale-summary').classList.add('hidden');
+                document.getElementById('sale-available-qty').textContent = '';
+            }
+        });
+
+        function calculateSale() {
+            const purchaseId = document.getElementById('sale-product').value;
+            const purchase = purchases.find(p => p.id === purchaseId);
+            if(!purchase) return;
+
+            const qty = Number(document.getElementById('sale-qty').value) || 0;
+            const price = Number(document.getElementById('sale-price').value) || 0;
+            const cost = Number(purchase.costPerItem);
+            
+            const profitPerItem = price - cost;
+            const totalProfit = profitPerItem * qty;
+
+            document.getElementById('sale-summary').classList.remove('hidden');
+            document.getElementById('sale-cost-label').innerHTML = formatRiyal(cost);
+            
+            const profitEl = document.getElementById('sale-profit-per-item-label');
+            profitEl.innerHTML = formatRiyal(profitPerItem);
+            profitEl.className = `font-bold ${profitPerItem >= 0 ? 'text-emerald-600' : 'text-red-500'}`;
+
+            const totalEl = document.getElementById('sale-total-profit-label');
+            totalEl.innerHTML = formatRiyal(totalProfit);
+            totalEl.className = `text-xl font-black ${totalProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`;
+        }
+
+        ['sale-qty', 'sale-price'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateSale);
+        });
+
+        document.getElementById('sale-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const purchaseId = document.getElementById('sale-product').value;
+            const purchase = purchases.find(p => p.id === purchaseId);
+            const qty = Number(document.getElementById('sale-qty').value);
+            const price = Number(document.getElementById('sale-price').value);
+            
+            if(!purchase || qty <= 0) return;
+            
+            const available = getAvailableQuantity(purchaseId);
+            if(qty > available) {
+                alert('الكمية المباعة تتجاوز المخزون المتاح!');
+                return;
+            }
+
+            const cost = Number(purchase.costPerItem);
+            const profitPerItem = price - cost;
+            
+            const sale = {
+                id: Date.now().toString(),
+                date: new Date().toISOString(),
+                purchaseId: purchaseId,
+                productName: purchase.productName,
+                quantity: qty,
+                sellingPrice: price,
+                costPerItem: cost,
+                profit: profitPerItem * qty,
+                revenue: price * qty
+            };
+
+            sales.unshift(sale);
+            saveSales();
+            switchView('sales-list');
+        });
+
+        function renderSalesList() {
+            const tbody = document.getElementById('sales-tbody');
+            if(sales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد مبيعات مسجلة حتى الآن.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sales.map(s => `
+                <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                    <td class="p-4 text-gray-500">${new Date(s.date).toLocaleDateString('ar-SA')}</td>
+                    <td class="p-4 font-medium text-gray-800">${s.productName}</td>
+                    <td class="p-4 text-center">${s.quantity}</td>
+                    <td class="p-4 text-center text-blue-600">${formatRiyal(s.sellingPrice)}</td>
+                    <td class="p-4 text-center font-bold ${s.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRiyal(s.profit)}</td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <button onclick="deleteSale('${s.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="حذف البيعة"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        window.deleteSale = function(id) {
+            if(confirm('هل أنت متأكد من حذف هذا السجل؟ سيعود المنتج للمخزون.')) {
+                sales = sales.filter(s => s.id !== id);
+                saveSales();
+                renderSalesList();
+            }
+        };
+
+        // عرض الرئيسية
+        function renderDashboard() {
+            let totalCapital = 0, expectedProfit = 0;
+            const merchants = new Set();
+
+            purchases.forEach(p => {
+                totalCapital += (Number(p.wholesalePrice) + Number(p.shippingCost || 0) + Number(p.packagingCost || 0));
+                expectedProfit += Number(p.totalProfit || 0);
+                if(p.merchantName) merchants.add(p.merchantName);
+            });
+
+            document.getElementById('dash-capital').innerHTML = formatRiyal(totalCapital);
+            document.getElementById('dash-profit').innerHTML = formatRiyal(expectedProfit);
+            document.getElementById('dash-merchants').textContent = merchants.size;
+            document.getElementById('dash-products').textContent = purchases.length;
+
+            const tbody = document.getElementById('dash-recent-list');
+            if(purchases.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-400">لا توجد مشتريات حتى الآن</td></tr>';
+            } else {
+                tbody.innerHTML = purchases.slice(0, 5).map(p => `
+                    <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                        <td class="p-4 font-medium">${p.productName}</td>
+                        <td class="p-4 text-gray-500">${p.merchantName || '-'}</td>
+                        <td class="p-4">${p.quantity} قطعة</td>
+                        <td class="p-4 text-emerald-600 font-semibold">${formatRiyal(p.totalProfit)}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // عرض التقارير
+        function renderReports() {
+            let totalCapital = 0, totalExpectedProfit = 0, maxProfit = -Infinity;
+            const merchantsMap = {};
+            let topProduct = null;
+
+            purchases.forEach(p => {
+                totalCapital += (Number(p.wholesalePrice) + Number(p.shippingCost || 0) + Number(p.packagingCost || 0));
+                totalExpectedProfit += Number(p.totalProfit || 0);
+                if(p.merchantName) merchantsMap[p.merchantName] = (merchantsMap[p.merchantName] || 0) + 1;
+                if (Number(p.totalProfit) > maxProfit) { maxProfit = Number(p.totalProfit); topProduct = p; }
+            });
+
+            // حسابات المبيعات الفعلية
+            let actualProfit = 0;
+            let actualRevenue = 0;
+            sales.forEach(s => {
+                actualProfit += Number(s.profit);
+                actualRevenue += Number(s.revenue);
+            });
+
+            let topMerchant = { name: '-', count: 0 };
+            for (const [name, count] of Object.entries(merchantsMap)) {
+                if (count > topMerchant.count) topMerchant = { name, count };
+            }
+
+            document.getElementById('rep-capital').innerHTML = formatRiyal(totalCapital);
+            document.getElementById('rep-profit').innerHTML = formatRiyal(totalExpectedProfit);
+            
+            document.getElementById('rep-actual-profit').innerHTML = formatRiyal(actualProfit);
+            document.getElementById('rep-actual-sales-revenue').innerHTML = `إجمالي إيرادات المبيعات: ${formatRiyal(actualRevenue)}`;
+
+            document.getElementById('rep-merchant').textContent = topMerchant.name;
+            document.getElementById('rep-merchant-count').textContent = topMerchant.count > 0 ? `${topMerchant.count} عمليات شراء` : '';
+
+            if(topProduct) {
+                document.getElementById('rep-product').textContent = topProduct.productName;
+                document.getElementById('rep-product-profit').innerHTML = `بربح إجمالي: ${formatRiyal(topProduct.totalProfit)}`;
+            } else {
+                document.getElementById('rep-product').textContent = 'لا توجد بيانات';
+                document.getElementById('rep-product-profit').textContent = '';
+            }
+        }
+
+        // التفاصيل، التعديل، الحذف
+        window.viewDetails = function(id) {
+            const p = purchases.find(p => p.id === id);
+            if(!p) return;
+            
+            document.getElementById('detail-title').textContent = p.productName;
+            document.getElementById('detail-merchant').innerHTML = `<i data-lucide="user" class="w-4 h-4"></i> ${p.merchantName || 'غير محدد'}`;
+            document.getElementById('detail-location').innerHTML = `<i data-lucide="map-pin" class="w-4 h-4"></i> ${p.location || 'غير محدد'}`;
+            document.getElementById('detail-qty').textContent = p.quantity;
+            document.getElementById('detail-wholesale').innerHTML = formatRiyal(p.wholesalePrice);
+            document.getElementById('detail-shipping').innerHTML = formatRiyal(p.shippingCost || 0);
+            document.getElementById('detail-packaging').innerHTML = formatRiyal(p.packagingCost || 0);
+            document.getElementById('detail-costPerItem').innerHTML = formatRiyal(p.costPerItem);
+            document.getElementById('detail-sellingPrice').innerHTML = formatRiyal(p.sellingPrice || 0);
+            
+            const pElem = document.getElementById('detail-profitPerItem');
+            pElem.innerHTML = formatRiyal(p.profitPerItem);
+            pElem.className = `font-semibold ${p.profitPerItem >= 0 ? "text-emerald-600" : "text-red-500"}`;
+
+            const tpElem = document.getElementById('detail-totalProfit');
+            tpElem.innerHTML = formatRiyal(p.totalProfit);
+            tpElem.className = `font-black text-xl ${p.totalProfit >= 0 ? "text-emerald-600" : "text-red-500"}`;
+
+            document.getElementById('detail-edit-btn').onclick = () => editPurchase(p.id);
+            document.getElementById('detail-delete-btn').onclick = () => {
+                if(deletePurchase(p.id)) {
+                    switchView('list');
+                }
+            };
+            switchView('details');
+        };
+
+        window.editPurchase = function(id) {
+            const p = purchases.find(p => p.id === id);
+            if(!p) return;
+            editingId = id;
+            document.getElementById('form-merchantName').value = p.merchantName || '';
+            document.getElementById('form-location').value = p.location || '';
+            document.getElementById('form-productName').value = p.productName || '';
+            document.getElementById('form-quantity').value = p.quantity || '';
+            document.getElementById('form-wholesalePrice').value = p.wholesalePrice || '';
+            document.getElementById('form-shippingCost').value = p.shippingCost || '';
+            document.getElementById('form-packagingCost').value = p.packagingCost || '';
+            document.getElementById('form-targetMargin').value = p.targetMargin || '30';
+            document.getElementById('form-sellingPrice').value = p.sellingPrice || '';
+            switchView('add');
+        };
+
+        window.deletePurchase = function(id) {
+            if(confirm('هل أنت متأكد من حذف هذا السجل؟ سيتم حذف المبيعات المرتبطة به أيضاً.')) {
+                purchases = purchases.filter(p => p.id !== id);
+                sales = sales.filter(s => s.purchaseId !== id);
+                savePurchases();
+                saveSales();
+                renderList();
+                renderDashboard();
+                return true;
+            }
+            return false;
+        };
+
+        // وظائف الإعدادات
+        window.exportCSV = function() {
+            if(purchases.length === 0) return alert("لا توجد بيانات للتصدير");
+            const headers = ["المنتج", "التاجر", "الموقع", "الكمية", "سعر الجملة", "التكلفة/قطعة", "سعر البيع", "الربح/قطعة", "إجمالي الربح", "التاريخ"];
+            const rows = purchases.map(p => [
+                p.productName, p.merchantName, p.location, p.quantity, 
+                p.wholesalePrice, p.costPerItem.toFixed(2), p.sellingPrice, 
+                p.profitPerItem.toFixed(2), p.totalProfit.toFixed(2), new Date(p.date).toLocaleDateString('ar-SA')
+            ]);
+            const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "مشتريات_المتجر.csv";
+            link.click();
+        };
+
+        window.backupJSON = function() {
+            const dataToBackup = { purchases, sales };
+            const dataStr = JSON.stringify(dataToBackup);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', 'نسخة_احتياطية_المتجر.json');
+            link.click();
+        };
+
+        document.getElementById('restore-file').addEventListener('change', function(e) {
+            if(!e.target.files.length) return;
+            const fileReader = new FileReader();
+            fileReader.readAsText(e.target.files[0], "UTF-8");
+            fileReader.onload = ev => {
+                try {
+                    const parsed = JSON.parse(ev.target.result);
+                    // دعم الصيغة القديمة والجديدة
+                    let newPurchases = [];
+                    let newSales = [];
+                    
+                    if(Array.isArray(parsed)) {
+                        newPurchases = parsed; // الصيغة القديمة
+                    } else if (parsed.purchases) {
+                        newPurchases = parsed.purchases;
+                        newSales = parsed.sales || [];
+                    } else {
+                        throw new Error("Invalid format");
+                    }
+
+                    if(confirm('هذا سيستبدل بياناتك الحالية، هل أنت متأكد؟')) {
+                        purchases = newPurchases;
+                        sales = newSales;
+                        savePurchases();
+                        saveSales();
+                        alert('تم استعادة البيانات بنجاح!');
+                        switchView('dashboard');
+                    }
+                } catch (error) { alert("حدث خطأ أثناء قراءة الملف"); }
+            };
+            e.target.value = '';
+        });
+
+        window.clearAllData = function() {
+            if(confirm('تحذير شديد! هل أنت متأكد من حذف جميع البيانات نهائياً؟')) {
+                if(confirm('هل أنت متأكد 100%؟ لا يمكن التراجع عن هذه الخطوة.')) {
+                    purchases = [];
+                    sales = [];
+                    savePurchases();
+                    saveSales();
+                    switchView('dashboard');
+                }
+            }
+        };
+
+        // البدء
+        renderDashboard();
+    </script>
+</body>
+</html>

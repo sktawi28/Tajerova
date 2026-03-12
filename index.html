@@ -62,6 +62,9 @@
                 <button onclick="switchView('sales-list')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="sales-list">
                     <i data-lucide="receipt" class="w-5 h-5"></i> <span>سجل المبيعات</span>
                 </button>
+                <button onclick="switchView('preorders-list')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="preorders-list">
+                    <i data-lucide="clock" class="w-5 h-5"></i> <span>الطلبات المسبقة</span>
+                </button>
                 <button onclick="switchView('reports')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl transition-colors whitespace-nowrap md:whitespace-normal text-gray-500 hover:bg-gray-100" data-target="reports">
                     <i data-lucide="bar-chart-3" class="w-5 h-5"></i> <span>التقارير</span>
                 </button>
@@ -86,19 +89,19 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="p-4 rounded-xl bg-blue-50 text-blue-500"><i data-lucide="dollar-sign"></i></div>
+                        <div class="p-4 rounded-xl bg-blue-50 text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.14 1256.39" class="w-6 h-6" style="width:1em; height:1em; vertical-align:-0.1em; fill:currentColor;" role="img" aria-label="Saudi Riyal"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg></div>
                         <div><p class="text-sm text-gray-500 mb-1">إجمالي رأس المال</p><p id="dash-capital" class="text-2xl font-bold text-gray-800">0.00 ريال</p></div>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="p-4 rounded-xl bg-emerald-50 text-emerald-500"><i data-lucide="trending-up"></i></div>
+                        <div class="p-4 rounded-xl bg-emerald-50 text-emerald-500"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
                         <div><p class="text-sm text-gray-500 mb-1">الأرباح المتوقعة</p><p id="dash-profit" class="text-2xl font-bold text-gray-800">0.00 ريال</p></div>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="p-4 rounded-xl bg-purple-50 text-purple-500"><i data-lucide="user"></i></div>
+                        <div class="p-4 rounded-xl bg-purple-50 text-purple-500"><i data-lucide="user" class="w-6 h-6"></i></div>
                         <div><p class="text-sm text-gray-500 mb-1">عدد التجار</p><p id="dash-merchants" class="text-2xl font-bold text-gray-800">0</p></div>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="p-4 rounded-xl bg-orange-50 text-orange-500"><i data-lucide="package"></i></div>
+                        <div class="p-4 rounded-xl bg-orange-50 text-orange-500"><i data-lucide="package" class="w-6 h-6"></i></div>
                         <div><p class="text-sm text-gray-500 mb-1">إجمالي المنتجات</p><p id="dash-products" class="text-2xl font-bold text-gray-800">0</p></div>
                     </div>
                 </div>
@@ -151,6 +154,26 @@
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">اسم المنتج *</label>
                                 <input type="text" id="form-productName" required placeholder="مثال: سماعات بلوتوث M10" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            
+                            <!-- رفع الصورة -->
+                            <div class="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">صورة المنتج (اختياري)</label>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-20 h-20 bg-white rounded-xl border border-gray-200 overflow-hidden flex items-center justify-center shrink-0 shadow-sm relative">
+                                        <img id="form-image-preview" src="" class="hidden w-full h-full object-cover">
+                                        <i data-lucide="image" id="form-image-placeholder" class="text-gray-300 w-8 h-8"></i>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm">
+                                            <i data-lucide="upload" class="w-4 h-4"></i> اختر صورة
+                                            <input type="file" id="form-product-image" accept="image/*" class="hidden">
+                                        </label>
+                                        <div>
+                                            <button type="button" id="form-remove-image" class="hidden text-red-500 text-sm font-medium hover:underline">حذف الصورة</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -224,7 +247,7 @@
                     <div class="p-6 bg-gray-50 border-t border-gray-100 flex flex-wrap justify-end gap-3">
                         <button type="button" onclick="switchView('list')" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-100 font-medium transition-colors">إلغاء</button>
                         
-                        <!-- زر حفظ وإضافة منتج آخر (جديد) -->
+                        <!-- زر حفظ وإضافة منتج آخر -->
                         <button type="button" id="btn-save-another" onclick="saveAndAddAnother()" class="px-6 py-3 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold transition-colors shadow-sm flex items-center gap-2">
                             <i data-lucide="plus" class="w-5 h-5"></i>
                             <span id="btn-save-another-text">حفظ وإضافة منتج آخر</span>
@@ -287,16 +310,23 @@
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-8 bg-emerald-50 border-b border-emerald-100 flex items-start justify-between">
-                        <div>
-                            <h1 id="detail-title" class="text-3xl font-bold text-emerald-900 mb-2">-</h1>
-                            <div class="flex items-center gap-4 text-emerald-700">
-                                <span id="detail-merchant" class="flex items-center gap-1"></span>
-                                <span id="detail-location" class="flex items-center gap-1"></span>
+                    <div class="p-8 bg-emerald-50 border-b border-emerald-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div class="flex items-center gap-6">
+                            <!-- عرض الصورة في التفاصيل -->
+                            <div class="w-24 h-24 bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden flex items-center justify-center shrink-0">
+                                <img id="detail-image" src="" class="hidden w-full h-full object-cover">
+                                <i data-lucide="image" id="detail-image-placeholder" class="text-emerald-200 w-10 h-10"></i>
+                            </div>
+                            <div>
+                                <h1 id="detail-title" class="text-3xl font-bold text-emerald-900 mb-2">-</h1>
+                                <div class="flex items-center gap-4 text-emerald-700">
+                                    <span id="detail-merchant" class="flex items-center gap-1"></span>
+                                    <span id="detail-location" class="flex items-center gap-1"></span>
+                                </div>
                             </div>
                         </div>
-                        <div class="text-left">
-                            <p class="text-sm text-emerald-600 mb-1">الكمية</p>
+                        <div class="text-left bg-white p-4 rounded-xl border border-emerald-100 shadow-sm w-full md:w-auto">
+                            <p class="text-sm text-emerald-600 mb-1 font-bold">الكمية المتبقية</p>
                             <p class="text-3xl font-black text-emerald-800"><span id="detail-qty">0</span> <span class="text-lg font-normal">قطعة</span></p>
                         </div>
                     </div>
@@ -326,54 +356,93 @@
                 </div>
             </div>
 
-            <!-- ميزة تسجيل المبيعات (جديد) -->
+            <!-- ميزة تسجيل المبيعات والطلب المسبق -->
             <div id="view-add-sale" class="view-section max-w-4xl mx-auto space-y-6">
                 <div class="flex items-center gap-4">
                     <button onclick="switchView('sales-list')" class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
-                    <h2 class="text-2xl font-bold text-gray-800">تسجيل عملية بيع جديدة</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">تسجيل مبيعات / طلب مسبق</h2>
                 </div>
                 <form id="sale-form" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-6 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">اختر المنتج *</label>
-                            <select id="sale-product" required class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
-                                <option value="">-- اختر المنتج من المخزون --</option>
-                            </select>
+                    
+                    <!-- أزرار التبديل بين البيع الفوري والطلب المسبق -->
+                    <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl w-full max-w-sm mx-auto">
+                        <button type="button" id="tab-direct-sale" onclick="toggleSaleMode('direct')" class="flex-1 py-2 rounded-lg bg-white shadow text-emerald-700 font-bold transition-all">بيع فوري</button>
+                        <button type="button" id="tab-preorder" onclick="toggleSaleMode('preorder')" class="flex-1 py-2 rounded-lg text-gray-500 hover:text-emerald-700 font-medium transition-all">طلب مسبق</button>
+                    </div>
+
+                    <!-- حقول البيع الفوري -->
+                    <div id="direct-sale-fields" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">اختر المنتج (من المخزون) *</label>
+                                <select id="sale-product" required class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                    <option value="">-- اختر المنتج من المخزون --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المباعة * <span id="sale-available-qty" class="text-emerald-600 font-bold text-xs ml-2"></span></label>
+                                <input type="number" id="sale-qty" required min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع للقطعة *</label>
+                                <input type="number" id="sale-price" required min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">طريقة الدفع *</label>
+                                <select id="sale-payment-method" required class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                    <option value="cash">كاش 💵</option>
+                                    <option value="card">شبكة 💳</option>
+                                </select>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المباعة * <span id="sale-available-qty" class="text-emerald-600 font-bold text-xs ml-2"></span></label>
-                            <input type="number" id="sale-qty" required min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع للقطعة *</label>
-                            <input type="number" id="sale-price" required min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                        
+                        <div id="sale-summary" class="hidden bg-emerald-50 border border-emerald-100 rounded-xl p-4 mt-4 space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">التكلفة للقطعة:</span>
+                                <span id="sale-cost-label" class="font-bold text-gray-800">0.00 ريال</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">الربح للقطعة الواحدة:</span>
+                                <span id="sale-profit-per-item-label" class="font-bold">0.00 ريال</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2 border-t border-emerald-200">
+                                <span class="text-gray-800 font-bold">إجمالي الربح من هذه البيعة:</span>
+                                <span id="sale-total-profit-label" class="text-xl font-black text-emerald-700">0.00 ريال</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div id="sale-summary" class="hidden bg-emerald-50 border border-emerald-100 rounded-xl p-4 mt-4 space-y-2">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">التكلفة للقطعة:</span>
-                            <span id="sale-cost-label" class="font-bold text-gray-800">0.00 ريال</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">الربح للقطعة الواحدة:</span>
-                            <span id="sale-profit-per-item-label" class="font-bold">0.00 ريال</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-emerald-200">
-                            <span class="text-gray-800 font-bold">إجمالي الربح من هذه البيعة:</span>
-                            <span id="sale-total-profit-label" class="text-xl font-black text-emerald-700">0.00 ريال</span>
+
+                    <!-- حقول الطلب المسبق (تظهر عند التبديل) -->
+                    <div id="preorder-fields" class="hidden space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">اسم المشتري (العميل) *</label>
+                                <input type="text" id="preorder-buyer" placeholder="مثال: أحمد محمد" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">المنتج المطلوب *</label>
+                                <input type="text" id="preorder-product" placeholder="مثال: سماعات موديل كذا..." class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المطلوبة *</label>
+                                <input type="number" id="preorder-qty" min="1" placeholder="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">موعد التسليم التقريبي *</label>
+                                <input type="date" id="preorder-date" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-right">
+                            </div>
                         </div>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
                         <button type="submit" class="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-md flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-5 h-5"></i> حفظ المبيعات
+                            <i data-lucide="check-circle" class="w-5 h-5"></i> <span id="btn-save-sale-text">حفظ المبيعات</span>
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- سجل المبيعات (جديد) -->
+            <!-- سجل المبيعات -->
             <div id="view-sales-list" class="view-section space-y-6">
                 <div class="flex justify-between items-center">
                     <h2 class="text-2xl font-bold text-gray-800">سجل المبيعات</h2>
@@ -390,11 +459,41 @@
                                     <th class="p-4 font-semibold">المنتج</th>
                                     <th class="p-4 font-semibold text-center">الكمية المباعة</th>
                                     <th class="p-4 font-semibold text-center">سعر البيع</th>
+                                    <th class="p-4 font-semibold text-center">طريقة الدفع</th>
                                     <th class="p-4 font-semibold text-center">إجمالي الربح</th>
                                     <th class="p-4 font-semibold text-center">إجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="sales-tbody" class="divide-y divide-gray-100">
+                                <!-- تملأ ديناميكيا -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- سجل الطلبات المسبقة -->
+            <div id="view-preorders-list" class="view-section space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">الطلبات المسبقة</h2>
+                    <button onclick="switchView('add-sale'); toggleSaleMode('preorder');" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                        <i data-lucide="plus" class="w-5 h-5"></i> إضافة طلب مسبق
+                    </button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4 font-semibold">تاريخ الطلب</th>
+                                    <th class="p-4 font-semibold">المشتري</th>
+                                    <th class="p-4 font-semibold">المنتج المطلوب</th>
+                                    <th class="p-4 font-semibold text-center">الكمية</th>
+                                    <th class="p-4 font-semibold text-center text-orange-600">موعد التسليم</th>
+                                    <th class="p-4 font-semibold text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preorders-tbody" class="divide-y divide-gray-100">
                                 <!-- تملأ ديناميكيا -->
                             </tbody>
                         </table>
@@ -413,7 +512,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 flex flex-col justify-center items-center text-center">
-                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4"><i data-lucide="dollar-sign" class="w-8 h-8"></i></div>
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.14 1256.39" class="w-8 h-8" style="width:1em; height:1em; vertical-align:-0.1em; fill:currentColor;" role="img" aria-label="Saudi Riyal"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg></div>
                         <p class="text-gray-500 mb-2">إجمالي رأس المال المستخدم</p>
                         <p id="rep-capital" class="text-3xl font-black text-gray-800">0.00 ريال</p>
                     </div>
@@ -424,12 +523,16 @@
                         <p id="rep-profit" class="text-3xl font-black">0.00 ريال</p>
                     </div>
 
-                    <!-- إحصائيات المبيعات الفعلية (جديد) -->
+                    <!-- إحصائيات المبيعات الفعلية -->
                     <div class="bg-green-50 p-6 rounded-2xl shadow-sm border border-green-200 flex flex-col justify-center items-center text-center md:col-span-2">
                         <div class="w-16 h-16 bg-green-200 text-green-700 rounded-full flex items-center justify-center mb-4"><i data-lucide="check-circle" class="w-8 h-8"></i></div>
                         <p class="text-green-800 mb-2 font-bold">الأرباح الفعلية المحققة (من المبيعات)</p>
                         <p id="rep-actual-profit" class="text-4xl font-black text-green-700">0.00 ريال</p>
                         <p id="rep-actual-sales-revenue" class="text-sm text-green-600 mt-2">إجمالي إيرادات المبيعات: 0.00 ريال</p>
+                        <div class="flex gap-4 justify-center mt-4 text-sm font-bold">
+                            <span class="bg-green-100 border border-green-300 text-green-800 px-4 py-1.5 rounded-xl shadow-sm" id="rep-actual-cash">كاش: 0.00</span>
+                            <span class="bg-blue-100 border border-blue-300 text-blue-800 px-4 py-1.5 rounded-xl shadow-sm" id="rep-actual-card">شبكة: 0.00</span>
+                        </div>
                     </div>
 
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -489,11 +592,12 @@
 
     <!-- كود الجافاسكربت الخاص بالتطبيق -->
     <script>
-        // تهيئة الأيقونات
-        lucide.createIcons();
+        // دالة مساعدة لتوليد أيقونة الريال
+        function getIcon(classes = "") {
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.14 1256.39" class="${classes}" style="width:1em; height:1em; vertical-align:-0.1em; fill:currentColor;" role="img" aria-label="Saudi Riyal"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg>`;
+        }
 
-        // أيقونة الريال السعودي
-        const riyalIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.14 1256.39" style="width:1em; height:1em; vertical-align:-0.1em; fill:currentColor;" role="img" aria-label="Saudi Riyal"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg>`;
+        const riyalIcon = getIcon();
 
         function formatRiyal(amount) {
             return `<span style="display:inline-flex; align-items:center; gap:0.25rem; direction:ltr; justify-content:flex-end;">${riyalIcon} <span>${Number(amount).toFixed(2)}</span></span>`;
@@ -502,16 +606,16 @@
         // البيانات
         let purchases = JSON.parse(localStorage.getItem('merchant_purchases')) || [];
         let sales = JSON.parse(localStorage.getItem('merchant_sales')) || [];
+        let preorders = JSON.parse(localStorage.getItem('merchant_preorders')) || [];
         let editingId = null;
         let selectedPurchase = null;
+        let saleMode = 'direct'; // 'direct' or 'preorder'
+        let currentProductImage = ""; // لتخزين صورة المنتج كـ Base64
 
         // الحفظ التلقائي
-        function savePurchases() {
-            localStorage.setItem('merchant_purchases', JSON.stringify(purchases));
-        }
-        function saveSales() {
-            localStorage.setItem('merchant_sales', JSON.stringify(sales));
-        }
+        function savePurchases() { localStorage.setItem('merchant_purchases', JSON.stringify(purchases)); }
+        function saveSales() { localStorage.setItem('merchant_sales', JSON.stringify(sales)); }
+        function savePreorders() { localStorage.setItem('merchant_preorders', JSON.stringify(preorders)); }
 
         // التنقل بين الصفحات
         function switchView(viewId) {
@@ -532,7 +636,11 @@
             if(viewId === 'list') renderList();
             if(viewId === 'reports') renderReports();
             if(viewId === 'sales-list') renderSalesList();
-            if(viewId === 'add-sale') renderAddSale();
+            if(viewId === 'preorders-list') renderPreordersList();
+            if(viewId === 'add-sale') {
+                renderAddSale();
+                toggleSaleMode('direct'); 
+            }
             if(viewId === 'add') {
                 const btnAnother = document.getElementById('btn-save-another');
                 if(!editingId) {
@@ -540,17 +648,76 @@
                     document.getElementById('form-targetMargin').value = '30';
                     document.getElementById('form-title').textContent = 'إضافة عملية شراء جديدة';
                     document.getElementById('form-submit-btn').textContent = 'حفظ عملية الشراء';
+                    clearImagePreview();
                     if(btnAnother) btnAnother.classList.remove('hidden');
                 } else {
                     document.getElementById('form-title').textContent = 'تعديل بيانات المنتج';
                     document.getElementById('form-submit-btn').textContent = 'تحديث البيانات';
-                    if(btnAnother) btnAnother.classList.add('hidden'); // إخفاء زر التكرار عند التعديل
+                    if(btnAnother) btnAnother.classList.add('hidden'); 
                 }
                 calculateForm();
             }
-
-            lucide.createIcons();
+            if (window.lucide) { lucide.createIcons(); }
         }
+
+        // --- معالجة الصور ---
+        document.getElementById('form-product-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 500; // تصغير الصورة لتقليل مساحة التخزين
+                    const MAX_HEIGHT = 500;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // ضغط الصورة إلى JPEG جودة 70%
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    currentProductImage = dataUrl;
+                    showImagePreview(dataUrl);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('form-remove-image').addEventListener('click', clearImagePreview);
+
+        function showImagePreview(base64Str) {
+            const preview = document.getElementById('form-image-preview');
+            const placeholder = document.getElementById('form-image-placeholder');
+            const removeBtn = document.getElementById('form-remove-image');
+            
+            preview.src = base64Str;
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            removeBtn.classList.remove('hidden');
+        }
+
+        function clearImagePreview() {
+            currentProductImage = "";
+            document.getElementById('form-product-image').value = "";
+            document.getElementById('form-image-preview').src = "";
+            document.getElementById('form-image-preview').classList.add('hidden');
+            document.getElementById('form-image-placeholder').classList.remove('hidden');
+            document.getElementById('form-remove-image').classList.add('hidden');
+        }
+        // ------------------
 
         // العمليات الحسابية في نموذج الإضافة
         function calculateForm() {
@@ -595,19 +762,16 @@
             return { costPerItem, profitPerItem, totalProfit, suggestedPrice };
         }
 
-        // ربط أحداث الإدخال للحساب الفوري
         ['form-quantity', 'form-wholesalePrice', 'form-shippingCost', 'form-packagingCost', 'form-targetMargin', 'form-sellingPrice'].forEach(id => {
             document.getElementById(id).addEventListener('input', calculateForm);
         });
 
-        // اعتماد السعر المقترح
         window.applySuggestedPrice = function() {
             const calcs = calculateForm();
             document.getElementById('form-sellingPrice').value = calcs.suggestedPrice.toFixed(2);
             calculateForm();
         };
 
-        // دالة حفظ البيانات الأساسية (مفصولة لتستخدم في الزرين)
         function performPurchaseSave() {
             const calcs = calculateForm();
 
@@ -617,6 +781,7 @@
                 merchantName: document.getElementById('form-merchantName').value,
                 location: document.getElementById('form-location').value,
                 productName: document.getElementById('form-productName').value,
+                productImage: currentProductImage, // إضافة الصورة للمنتج
                 quantity: document.getElementById('form-quantity').value,
                 wholesalePrice: document.getElementById('form-wholesalePrice').value,
                 shippingCost: document.getElementById('form-shippingCost').value,
@@ -638,7 +803,6 @@
             savePurchases();
         }
 
-        // حفظ الشراء العادي (والخروج)
         document.getElementById('purchase-form').addEventListener('submit', (e) => {
             e.preventDefault();
             performPurchaseSave();
@@ -646,34 +810,31 @@
             switchView('list');
         });
 
-        // حفظ وإضافة منتج آخر لنفس التاجر (ميزة جديدة)
         window.saveAndAddAnother = function() {
             const form = document.getElementById('purchase-form');
             if(!form.checkValidity()) {
-                form.reportValidity(); // إظهار رسائل الخطأ إذا كانت الحقول فارغة
+                form.reportValidity();
                 return;
             }
 
             performPurchaseSave();
             editingId = null;
 
-            // تصفير حقول المنتج مع إبقاء بيانات التاجر
+            // تصفير حقول المنتج مع إبقاء التاجر
             document.getElementById('form-productName').value = '';
             document.getElementById('form-quantity').value = '';
             document.getElementById('form-wholesalePrice').value = '';
-            document.getElementById('form-shippingCost').value = ''; // تصفير الشحن لأنه عادة خاص بالشحنة وليس مكرر
+            document.getElementById('form-shippingCost').value = '';
             document.getElementById('form-packagingCost').value = '';
             document.getElementById('form-sellingPrice').value = '';
+            clearImagePreview(); // مسح الصورة السابقة
             
-            calculateForm(); // إعادة الحسابات للتحديث UI
+            calculateForm();
 
-            // إظهار رسالة نجاح مؤقتة في الزر نفسه
             const btnText = document.getElementById('btn-save-another-text');
             const originalText = btnText.innerText;
             btnText.innerText = "تم الحفظ بنجاح!";
-            setTimeout(() => {
-                btnText.innerText = originalText;
-            }, 2000);
+            setTimeout(() => { btnText.innerText = originalText; }, 2000);
         };
 
         // عرض القائمة
@@ -691,27 +852,33 @@
                 return;
             }
 
-            tbody.innerHTML = filtered.map(p => `
+            tbody.innerHTML = filtered.map(p => {
+                const imageHtml = p.productImage 
+                    ? `<img src="${p.productImage}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0">` 
+                    : `<div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0"><i data-lucide="image" class="w-5 h-5 text-gray-400"></i></div>`;
+                
+                return `
                 <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
                     <td class="p-4 font-medium text-gray-800">
-                        <button onclick="viewDetails('${p.id}')" class="hover:text-emerald-600 text-right">${p.productName}</button>
+                        <div class="flex items-center gap-3">
+                            ${imageHtml}
+                            <button onclick="viewDetails('${p.id}')" class="hover:text-emerald-600 text-right">${p.productName}</button>
+                        </div>
                     </td>
                     <td class="p-4 text-gray-500">${p.merchantName || '-'}</td>
                     <td class="p-4 text-center">${p.quantity}</td>
                     <td class="p-4 text-center text-orange-600">${formatRiyal(p.costPerItem)}</td>
                     <td class="p-4 text-center font-bold text-emerald-600">${formatRiyal(p.totalProfit)}</td>
-                    <td class="p-4 flex justify-center gap-2">
+                    <td class="p-4 flex justify-center gap-2 items-center h-full pt-6">
                         <button onclick="viewDetails('${p.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg" title="التفاصيل"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         <button onclick="editPurchase('${p.id}')" class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg" title="تعديل"><i data-lucide="edit" class="w-4 h-4"></i></button>
                         <button onclick="deletePurchase('${p.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="حذف"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </td>
                 </tr>
-            `).join('');
-            lucide.createIcons();
+            `}).join('');
+            if (window.lucide) lucide.createIcons();
         }
         document.getElementById('list-search').addEventListener('input', renderList);
-
-        // -- منطق المبيعات (جديد) --
 
         function getAvailableQuantity(purchaseId) {
             const purchase = purchases.find(p => p.id === purchaseId);
@@ -719,6 +886,49 @@
             const soldQty = sales.filter(s => s.purchaseId === purchaseId).reduce((sum, s) => sum + Number(s.quantity), 0);
             return Number(purchase.quantity) - soldQty;
         }
+
+        window.toggleSaleMode = function(mode) {
+            saleMode = mode;
+            const tabDirect = document.getElementById('tab-direct-sale');
+            const tabPreorder = document.getElementById('tab-preorder');
+            const fieldsDirect = document.getElementById('direct-sale-fields');
+            const fieldsPreorder = document.getElementById('preorder-fields');
+            const btnText = document.getElementById('btn-save-sale-text');
+
+            if(mode === 'direct') {
+                tabDirect.className = "flex-1 py-2 rounded-lg bg-white shadow text-emerald-700 font-bold transition-all";
+                tabPreorder.className = "flex-1 py-2 rounded-lg text-gray-500 hover:text-emerald-700 font-medium transition-all";
+                fieldsDirect.classList.remove('hidden');
+                fieldsPreorder.classList.add('hidden');
+                btnText.textContent = 'حفظ المبيعات';
+                
+                document.getElementById('sale-product').required = true;
+                document.getElementById('sale-qty').required = true;
+                document.getElementById('sale-price').required = true;
+                document.getElementById('sale-payment-method').required = true;
+                
+                document.getElementById('preorder-buyer').required = false;
+                document.getElementById('preorder-product').required = false;
+                document.getElementById('preorder-qty').required = false;
+                document.getElementById('preorder-date').required = false;
+            } else {
+                tabPreorder.className = "flex-1 py-2 rounded-lg bg-white shadow text-emerald-700 font-bold transition-all";
+                tabDirect.className = "flex-1 py-2 rounded-lg text-gray-500 hover:text-emerald-700 font-medium transition-all";
+                fieldsPreorder.classList.remove('hidden');
+                fieldsDirect.classList.add('hidden');
+                btnText.textContent = 'حفظ الطلب المسبق';
+
+                document.getElementById('sale-product').required = false;
+                document.getElementById('sale-qty').required = false;
+                document.getElementById('sale-price').required = false;
+                document.getElementById('sale-payment-method').required = false;
+                
+                document.getElementById('preorder-buyer').required = true;
+                document.getElementById('preorder-product').required = true;
+                document.getElementById('preorder-qty').required = true;
+                document.getElementById('preorder-date').required = true;
+            }
+        };
 
         function renderAddSale() {
             const select = document.getElementById('sale-product');
@@ -778,37 +988,61 @@
 
         document.getElementById('sale-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const purchaseId = document.getElementById('sale-product').value;
-            const purchase = purchases.find(p => p.id === purchaseId);
-            const qty = Number(document.getElementById('sale-qty').value);
-            const price = Number(document.getElementById('sale-price').value);
-            
-            if(!purchase || qty <= 0) return;
-            
-            const available = getAvailableQuantity(purchaseId);
-            if(qty > available) {
-                alert('الكمية المباعة تتجاوز المخزون المتاح!');
-                return;
+
+            if (saleMode === 'direct') {
+                const purchaseId = document.getElementById('sale-product').value;
+                const purchase = purchases.find(p => p.id === purchaseId);
+                const qty = Number(document.getElementById('sale-qty').value);
+                const price = Number(document.getElementById('sale-price').value);
+                const paymentMethod = document.getElementById('sale-payment-method').value;
+                
+                if(!purchase || qty <= 0) return;
+                
+                const available = getAvailableQuantity(purchaseId);
+                if(qty > available) {
+                    alert('الكمية المباعة تتجاوز المخزون المتاح!');
+                    return;
+                }
+
+                const cost = Number(purchase.costPerItem);
+                const profitPerItem = price - cost;
+                
+                const sale = {
+                    id: Date.now().toString(),
+                    date: new Date().toISOString(),
+                    purchaseId: purchaseId,
+                    productName: purchase.productName,
+                    quantity: qty,
+                    sellingPrice: price,
+                    paymentMethod: paymentMethod,
+                    costPerItem: cost,
+                    profit: profitPerItem * qty,
+                    revenue: price * qty
+                };
+
+                sales.unshift(sale);
+                saveSales();
+                switchView('sales-list');
+
+            } else if (saleMode === 'preorder') {
+                const buyer = document.getElementById('preorder-buyer').value;
+                const product = document.getElementById('preorder-product').value;
+                const qty = document.getElementById('preorder-qty').value;
+                const date = document.getElementById('preorder-date').value;
+
+                const preorder = {
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                    buyerName: buyer,
+                    productName: product,
+                    quantity: qty,
+                    deliveryDate: date
+                };
+
+                preorders.unshift(preorder);
+                savePreorders();
+                switchView('preorders-list');
             }
-
-            const cost = Number(purchase.costPerItem);
-            const profitPerItem = price - cost;
-            
-            const sale = {
-                id: Date.now().toString(),
-                date: new Date().toISOString(),
-                purchaseId: purchaseId,
-                productName: purchase.productName,
-                quantity: qty,
-                sellingPrice: price,
-                costPerItem: cost,
-                profit: profitPerItem * qty,
-                revenue: price * qty
-            };
-
-            sales.unshift(sale);
-            saveSales();
-            switchView('sales-list');
         });
 
         function renderSalesList() {
@@ -824,13 +1058,18 @@
                     <td class="p-4 font-medium text-gray-800">${s.productName}</td>
                     <td class="p-4 text-center">${s.quantity}</td>
                     <td class="p-4 text-center text-blue-600">${formatRiyal(s.sellingPrice)}</td>
+                    <td class="p-4 text-center">
+                        ${s.paymentMethod === 'card' 
+                            ? '<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200">شبكة 💳</span>' 
+                            : '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">كاش 💵</span>'}
+                    </td>
                     <td class="p-4 text-center font-bold ${s.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${formatRiyal(s.profit)}</td>
                     <td class="p-4 flex justify-center gap-2">
                         <button onclick="deleteSale('${s.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="حذف البيعة"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </td>
                 </tr>
             `).join('');
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
         window.deleteSale = function(id) {
@@ -841,7 +1080,40 @@
             }
         };
 
-        // عرض الرئيسية
+        function renderPreordersList() {
+            const tbody = document.getElementById('preorders-tbody');
+            if(preorders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد طلبات مسبقة حتى الآن.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = preorders.map(p => {
+                const isPastDue = new Date(p.deliveryDate) < new Date();
+                return `
+                <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                    <td class="p-4 text-gray-500 text-sm">${new Date(p.createdAt).toLocaleDateString('ar-SA')}</td>
+                    <td class="p-4 font-bold text-gray-800">${p.buyerName}</td>
+                    <td class="p-4 font-medium text-emerald-700">${p.productName}</td>
+                    <td class="p-4 text-center">${p.quantity}</td>
+                    <td class="p-4 text-center font-bold ${isPastDue ? 'text-red-500' : 'text-orange-600'}" dir="ltr">
+                        ${p.deliveryDate ? new Date(p.deliveryDate).toLocaleDateString('ar-SA') : '-'}
+                    </td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <button onclick="deletePreorder('${p.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="حذف الطلب"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
+                </tr>
+            `}).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        window.deletePreorder = function(id) {
+            if(confirm('هل أنت متأكد من حذف هذا الطلب المسبق؟')) {
+                preorders = preorders.filter(p => p.id !== id);
+                savePreorders();
+                renderPreordersList();
+            }
+        };
+
         function renderDashboard() {
             let totalCapital = 0, expectedProfit = 0;
             const merchants = new Set();
@@ -872,7 +1144,6 @@
             }
         }
 
-        // عرض التقارير
         function renderReports() {
             let totalCapital = 0, totalExpectedProfit = 0, maxProfit = -Infinity;
             const merchantsMap = {};
@@ -885,12 +1156,20 @@
                 if (Number(p.totalProfit) > maxProfit) { maxProfit = Number(p.totalProfit); topProduct = p; }
             });
 
-            // حسابات المبيعات الفعلية
             let actualProfit = 0;
             let actualRevenue = 0;
+            let actualCash = 0;
+            let actualCard = 0;
+            
             sales.forEach(s => {
                 actualProfit += Number(s.profit);
                 actualRevenue += Number(s.revenue);
+                
+                if (s.paymentMethod === 'card') {
+                    actualCard += Number(s.revenue);
+                } else {
+                    actualCash += Number(s.revenue);
+                }
             });
 
             let topMerchant = { name: '-', count: 0 };
@@ -903,6 +1182,9 @@
             
             document.getElementById('rep-actual-profit').innerHTML = formatRiyal(actualProfit);
             document.getElementById('rep-actual-sales-revenue').innerHTML = `إجمالي إيرادات المبيعات: ${formatRiyal(actualRevenue)}`;
+            
+            document.getElementById('rep-actual-cash').innerHTML = `كاش: ${formatRiyal(actualCash)}`;
+            document.getElementById('rep-actual-card').innerHTML = `شبكة: ${formatRiyal(actualCard)}`;
 
             document.getElementById('rep-merchant').textContent = topMerchant.name;
             document.getElementById('rep-merchant-count').textContent = topMerchant.count > 0 ? `${topMerchant.count} عمليات شراء` : '';
@@ -916,15 +1198,30 @@
             }
         }
 
-        // التفاصيل، التعديل، الحذف
         window.viewDetails = function(id) {
             const p = purchases.find(p => p.id === id);
             if(!p) return;
             
+            // عرض الصورة في التفاصيل إن وجدت
+            const detailImage = document.getElementById('detail-image');
+            const placeholder = document.getElementById('detail-image-placeholder');
+            if (p.productImage) {
+                detailImage.src = p.productImage;
+                detailImage.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                detailImage.src = "";
+                detailImage.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+
             document.getElementById('detail-title').textContent = p.productName;
             document.getElementById('detail-merchant').innerHTML = `<i data-lucide="user" class="w-4 h-4"></i> ${p.merchantName || 'غير محدد'}`;
             document.getElementById('detail-location').innerHTML = `<i data-lucide="map-pin" class="w-4 h-4"></i> ${p.location || 'غير محدد'}`;
-            document.getElementById('detail-qty').textContent = p.quantity;
+            
+            const availableQty = getAvailableQuantity(p.id);
+            document.getElementById('detail-qty').textContent = availableQty;
+            
             document.getElementById('detail-wholesale').innerHTML = formatRiyal(p.wholesalePrice);
             document.getElementById('detail-shipping').innerHTML = formatRiyal(p.shippingCost || 0);
             document.getElementById('detail-packaging').innerHTML = formatRiyal(p.packagingCost || 0);
@@ -961,6 +1258,15 @@
             document.getElementById('form-packagingCost').value = p.packagingCost || '';
             document.getElementById('form-targetMargin').value = p.targetMargin || '30';
             document.getElementById('form-sellingPrice').value = p.sellingPrice || '';
+            
+            // تحميل الصورة إن وجدت
+            if(p.productImage) {
+                currentProductImage = p.productImage;
+                showImagePreview(p.productImage);
+            } else {
+                clearImagePreview();
+            }
+
             switchView('add');
         };
 
@@ -977,7 +1283,6 @@
             return false;
         };
 
-        // وظائف الإعدادات
         window.exportCSV = function() {
             if(purchases.length === 0) return alert("لا توجد بيانات للتصدير");
             const headers = ["المنتج", "التاجر", "الموقع", "الكمية", "سعر الجملة", "التكلفة/قطعة", "سعر البيع", "الربح/قطعة", "إجمالي الربح", "التاريخ"];
@@ -995,7 +1300,7 @@
         };
 
         window.backupJSON = function() {
-            const dataToBackup = { purchases, sales };
+            const dataToBackup = { purchases, sales, preorders };
             const dataStr = JSON.stringify(dataToBackup);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             const link = document.createElement('a');
@@ -1011,15 +1316,16 @@
             fileReader.onload = ev => {
                 try {
                     const parsed = JSON.parse(ev.target.result);
-                    // دعم الصيغة القديمة والجديدة
                     let newPurchases = [];
                     let newSales = [];
+                    let newPreorders = [];
                     
                     if(Array.isArray(parsed)) {
-                        newPurchases = parsed; // الصيغة القديمة
+                        newPurchases = parsed;
                     } else if (parsed.purchases) {
                         newPurchases = parsed.purchases;
                         newSales = parsed.sales || [];
+                        newPreorders = parsed.preorders || [];
                     } else {
                         throw new Error("Invalid format");
                     }
@@ -1027,8 +1333,10 @@
                     if(confirm('هذا سيستبدل بياناتك الحالية، هل أنت متأكد؟')) {
                         purchases = newPurchases;
                         sales = newSales;
+                        preorders = newPreorders;
                         savePurchases();
                         saveSales();
+                        savePreorders();
                         alert('تم استعادة البيانات بنجاح!');
                         switchView('dashboard');
                     }
@@ -1042,8 +1350,10 @@
                 if(confirm('هل أنت متأكد 100%؟ لا يمكن التراجع عن هذه الخطوة.')) {
                     purchases = [];
                     sales = [];
+                    preorders = [];
                     savePurchases();
                     saveSales();
+                    savePreorders();
                     switchView('dashboard');
                 }
             }
@@ -1051,6 +1361,9 @@
 
         // البدء
         renderDashboard();
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     </script>
 </body>
 </html>

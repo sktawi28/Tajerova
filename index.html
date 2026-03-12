@@ -32,6 +32,19 @@
             .print-full { margin: 0; padding: 0; width: 100%; }
             body { background: white; }
         }
+
+        /* تنسيق تحديد المنتج في الشبكة */
+        .product-card { transition: all 0.2s ease; }
+        .product-card.selected {
+            border-color: #10b981 !important;
+            background-color: #f0fdf4 !important;
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1) !important;
+        }
+        .product-card.selected .selection-check {
+            opacity: 1;
+            transform: scale(1);
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800" style="font-family: system-ui, -apple-system, sans-serif;">
@@ -75,7 +88,7 @@
         </aside>
 
         <!-- المحتوى الرئيسي -->
-        <main class="flex-1 md:mr-64 p-4 md:p-8">
+        <main class="flex-1 md:mr-64 p-4 md:p-8 relative">
             
             <!-- 1. الرئيسية -->
             <div id="view-dashboard" class="view-section active space-y-6">
@@ -362,34 +375,41 @@
                     <button onclick="switchView('sales-list')" class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
                     <h2 class="text-2xl font-bold text-gray-800">تسجيل مبيعات / طلب مسبق</h2>
                 </div>
+                
                 <form id="sale-form" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-6 space-y-6">
                     
                     <!-- أزرار التبديل بين البيع الفوري والطلب المسبق -->
-                    <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl w-full max-w-sm mx-auto">
+                    <div class="flex gap-2 mb-2 bg-gray-100 p-1 rounded-xl w-full max-w-sm mx-auto">
                         <button type="button" id="tab-direct-sale" onclick="toggleSaleMode('direct')" class="flex-1 py-2 rounded-lg bg-white shadow text-emerald-700 font-bold transition-all">بيع فوري</button>
                         <button type="button" id="tab-preorder" onclick="toggleSaleMode('preorder')" class="flex-1 py-2 rounded-lg text-gray-500 hover:text-emerald-700 font-medium transition-all">طلب مسبق</button>
+                    </div>
+
+                    <!-- شبكة العرض المرئية للمنتجات (مشتركة بين البيع والطلب المسبق) -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                            <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-600"></i> اختر المنتج من المخزون:
+                        </h3>
+                        <div id="sale-product-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto p-2">
+                            <!-- سيتم توليد المنتجات هنا -->
+                        </div>
+                        <input type="hidden" id="selected-product-id" required>
+                        <p id="sale-product-error" class="text-red-500 text-xs hidden mt-2">الرجاء اختيار منتج أولاً</p>
                     </div>
 
                     <!-- حقول البيع الفوري -->
                     <div id="direct-sale-fields" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="md:col-span-3">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">اختر المنتج (من المخزون) *</label>
-                                <select id="sale-product" required class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
-                                    <option value="">-- اختر المنتج من المخزون --</option>
-                                </select>
-                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المباعة * <span id="sale-available-qty" class="text-emerald-600 font-bold text-xs ml-2"></span></label>
-                                <input type="number" id="sale-qty" required min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <input type="number" id="sale-qty" min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع للقطعة *</label>
-                                <input type="number" id="sale-price" required min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <input type="number" id="sale-price" min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">طريقة الدفع *</label>
-                                <select id="sale-payment-method" required class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                <select id="sale-payment-method" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                                     <option value="cash">كاش 💵</option>
                                     <option value="card">شبكة 💳</option>
                                 </select>
@@ -409,28 +429,42 @@
                                 <span class="text-gray-800 font-bold">إجمالي الربح من هذه البيعة:</span>
                                 <span id="sale-total-profit-label" class="text-xl font-black text-emerald-700">0.00 ريال</span>
                             </div>
+                            <!-- عرض إجمالي سعر البيع للعميل بشكل بارز -->
+                            <div class="flex justify-between items-center pt-3 mt-2 border-t border-emerald-200 bg-emerald-100/50 p-2 rounded-lg">
+                                <span class="text-emerald-900 font-black">المبلغ الإجمالي المطلوب من العميل:</span>
+                                <span id="sale-total-price-label" class="text-2xl font-black text-blue-700">0.00 ريال</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- حقول الطلب المسبق (تظهر عند التبديل) -->
+                    <!-- حقول الطلب المسبق -->
                     <div id="preorder-fields" class="hidden space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
+                            <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">اسم المشتري (العميل) *</label>
-                                <input type="text" id="preorder-buyer" placeholder="مثال: أحمد محمد" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <input type="text" id="preorder-buyer" placeholder="مثال: أحمد محمد" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">المنتج المطلوب *</label>
-                                <input type="text" id="preorder-product" placeholder="مثال: سماعات موديل كذا..." class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <input type="text" id="preorder-product" placeholder="مثال: سماعات موديل كذا..." class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المطلوبة *</label>
-                                <input type="number" id="preorder-qty" min="1" placeholder="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <input type="number" id="preorder-qty" min="1" placeholder="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">موعد التسليم التقريبي *</label>
-                                <input type="date" id="preorder-date" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-right">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع للقطعة المتفق عليه *</label>
+                                <input type="number" id="preorder-price" min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">موعد التسليم التقريبي *</label>
+                                <input type="date" id="preorder-date" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-right bg-white">
+                            </div>
+                        </div>
+
+                        <div id="preorder-summary" class="hidden bg-blue-50 border border-blue-100 rounded-xl p-4 mt-4 flex justify-between items-center">
+                            <span class="text-blue-800 font-bold">إجمالي مبلغ الشراء المطلوب:</span>
+                            <span id="preorder-total-label" class="text-xl font-black text-blue-700">0.00 ريال</span>
                         </div>
                     </div>
 
@@ -446,7 +480,7 @@
             <div id="view-sales-list" class="view-section space-y-6">
                 <div class="flex justify-between items-center">
                     <h2 class="text-2xl font-bold text-gray-800">سجل المبيعات</h2>
-                    <button onclick="switchView('add-sale')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                    <button onclick="switchView('add-sale'); toggleSaleMode('direct');" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
                         <i data-lucide="plus" class="w-5 h-5"></i> إضافة بيع
                     </button>
                 </div>
@@ -485,11 +519,12 @@
                         <table class="w-full text-right">
                             <thead class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
                                 <tr>
-                                    <th class="p-4 font-semibold">تاريخ الطلب</th>
                                     <th class="p-4 font-semibold">المشتري</th>
                                     <th class="p-4 font-semibold">المنتج المطلوب</th>
                                     <th class="p-4 font-semibold text-center">الكمية</th>
-                                    <th class="p-4 font-semibold text-center text-orange-600">موعد التسليم</th>
+                                    <th class="p-4 font-semibold text-center">إجمالي المبلغ</th>
+                                    <th class="p-4 font-semibold text-center">موعد التسليم</th>
+                                    <th class="p-4 font-semibold text-center">الحالة</th>
                                     <th class="p-4 font-semibold text-center">إجراءات</th>
                                 </tr>
                             </thead>
@@ -587,6 +622,27 @@
                 </div>
             </div>
 
+            <!-- نافذة تأكيد تسليم الطلب المسبق (Modal) -->
+            <div id="delivery-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center transition-opacity print-hidden">
+                <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl transform transition-all border border-emerald-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="check-circle" class="text-emerald-600 w-5 h-5"></i> تأكيد تسليم الطلب المسبق
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-4">يرجى تحديد طريقة دفع العميل لإكمال عملية التسليم وإضافتها لسجل المبيعات والأرباح.</p>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">طريقة الدفع *</label>
+                        <select id="delivery-payment-method" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                            <option value="cash">كاش 💵</option>
+                            <option value="card">شبكة 💳</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-50 font-medium transition-colors">إلغاء</button>
+                        <button onclick="confirmDelivery()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-md">تأكيد التسليم</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -608,9 +664,9 @@
         let sales = JSON.parse(localStorage.getItem('merchant_sales')) || [];
         let preorders = JSON.parse(localStorage.getItem('merchant_preorders')) || [];
         let editingId = null;
-        let selectedPurchase = null;
         let saleMode = 'direct'; // 'direct' or 'preorder'
-        let currentProductImage = ""; // لتخزين صورة المنتج كـ Base64
+        let currentProductImage = "";
+        let selectedProductForSale = null; // تخزين المنتج المحدد حالياً في شبكة المبيعات
 
         // الحفظ التلقائي
         function savePurchases() { localStorage.setItem('merchant_purchases', JSON.stringify(purchases)); }
@@ -638,7 +694,7 @@
             if(viewId === 'sales-list') renderSalesList();
             if(viewId === 'preorders-list') renderPreordersList();
             if(viewId === 'add-sale') {
-                renderAddSale();
+                renderAddSaleGrid();
                 toggleSaleMode('direct'); 
             }
             if(viewId === 'add') {
@@ -664,29 +720,23 @@
         document.getElementById('form-product-image').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 500; // تصغير الصورة لتقليل مساحة التخزين
+                    const MAX_WIDTH = 500; 
                     const MAX_HEIGHT = 500;
                     let width = img.width;
                     let height = img.height;
-
                     if (width > height) {
                         if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                     } else {
                         if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                     }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // ضغط الصورة إلى JPEG جودة 70%
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                     currentProductImage = dataUrl;
                     showImagePreview(dataUrl);
@@ -702,7 +752,6 @@
             const preview = document.getElementById('form-image-preview');
             const placeholder = document.getElementById('form-image-placeholder');
             const removeBtn = document.getElementById('form-remove-image');
-            
             preview.src = base64Str;
             preview.classList.remove('hidden');
             placeholder.classList.add('hidden');
@@ -717,9 +766,8 @@
             document.getElementById('form-image-placeholder').classList.remove('hidden');
             document.getElementById('form-remove-image').classList.add('hidden');
         }
-        // ------------------
 
-        // العمليات الحسابية في نموذج الإضافة
+        // --- حسابات المنتجات الأساسية ---
         function calculateForm() {
             const qty = Number(document.getElementById('form-quantity').value) || 0;
             const wholesale = Number(document.getElementById('form-wholesalePrice').value) || 0;
@@ -774,14 +822,13 @@
 
         function performPurchaseSave() {
             const calcs = calculateForm();
-
             const formData = {
                 id: editingId || Date.now().toString(),
                 date: editingId ? (purchases.find(p=>p.id===editingId)?.date || new Date().toISOString()) : new Date().toISOString(),
                 merchantName: document.getElementById('form-merchantName').value,
                 location: document.getElementById('form-location').value,
                 productName: document.getElementById('form-productName').value,
-                productImage: currentProductImage, // إضافة الصورة للمنتج
+                productImage: currentProductImage,
                 quantity: document.getElementById('form-quantity').value,
                 wholesalePrice: document.getElementById('form-wholesalePrice').value,
                 shippingCost: document.getElementById('form-shippingCost').value,
@@ -799,7 +846,6 @@
             } else {
                 purchases.unshift(formData);
             }
-
             savePurchases();
         }
 
@@ -812,23 +858,17 @@
 
         window.saveAndAddAnother = function() {
             const form = document.getElementById('purchase-form');
-            if(!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
+            if(!form.checkValidity()) { form.reportValidity(); return; }
             performPurchaseSave();
             editingId = null;
 
-            // تصفير حقول المنتج مع إبقاء التاجر
             document.getElementById('form-productName').value = '';
             document.getElementById('form-quantity').value = '';
             document.getElementById('form-wholesalePrice').value = '';
             document.getElementById('form-shippingCost').value = '';
             document.getElementById('form-packagingCost').value = '';
             document.getElementById('form-sellingPrice').value = '';
-            clearImagePreview(); // مسح الصورة السابقة
-            
+            clearImagePreview(); 
             calculateForm();
 
             const btnText = document.getElementById('btn-save-another-text');
@@ -837,7 +877,7 @@
             setTimeout(() => { btnText.innerText = originalText; }, 2000);
         };
 
-        // عرض القائمة
+        // --- سجل المشتريات ---
         function renderList() {
             const term = document.getElementById('list-search').value.toLowerCase();
             const filtered = purchases.filter(p => 
@@ -845,13 +885,11 @@
                 (p.merchantName || '').toLowerCase().includes(term) ||
                 (p.location || '').toLowerCase().includes(term)
             );
-
             const tbody = document.getElementById('list-tbody');
             if(filtered.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد نتائج مطابقة لبحثك.</td></tr>';
                 return;
             }
-
             tbody.innerHTML = filtered.map(p => {
                 const imageHtml = p.productImage 
                     ? `<img src="${p.productImage}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0">` 
@@ -880,11 +918,14 @@
         }
         document.getElementById('list-search').addEventListener('input', renderList);
 
+        // --- المبيعات والطلبات المسبقة ---
+        // الخصم التلقائي من المخزون لحساب الكمية المتاحة (يحسب المبيعات الفورية + الطلبات المسبقة التي لم تُسلم بعد)
         function getAvailableQuantity(purchaseId) {
             const purchase = purchases.find(p => p.id === purchaseId);
             if(!purchase) return 0;
             const soldQty = sales.filter(s => s.purchaseId === purchaseId).reduce((sum, s) => sum + Number(s.quantity), 0);
-            return Number(purchase.quantity) - soldQty;
+            const pendingPreorderQty = preorders.filter(p => p.purchaseId === purchaseId && p.status !== 'delivered').reduce((sum, p) => sum + Number(p.quantity), 0);
+            return Number(purchase.quantity) - soldQty - pendingPreorderQty;
         }
 
         window.toggleSaleMode = function(mode) {
@@ -902,14 +943,13 @@
                 fieldsPreorder.classList.add('hidden');
                 btnText.textContent = 'حفظ المبيعات';
                 
-                document.getElementById('sale-product').required = true;
                 document.getElementById('sale-qty').required = true;
                 document.getElementById('sale-price').required = true;
                 document.getElementById('sale-payment-method').required = true;
                 
                 document.getElementById('preorder-buyer').required = false;
-                document.getElementById('preorder-product').required = false;
                 document.getElementById('preorder-qty').required = false;
+                document.getElementById('preorder-price').required = false;
                 document.getElementById('preorder-date').required = false;
             } else {
                 tabPreorder.className = "flex-1 py-2 rounded-lg bg-white shadow text-emerald-700 font-bold transition-all";
@@ -918,100 +958,188 @@
                 fieldsDirect.classList.add('hidden');
                 btnText.textContent = 'حفظ الطلب المسبق';
 
-                document.getElementById('sale-product').required = false;
                 document.getElementById('sale-qty').required = false;
                 document.getElementById('sale-price').required = false;
                 document.getElementById('sale-payment-method').required = false;
                 
                 document.getElementById('preorder-buyer').required = true;
-                document.getElementById('preorder-product').required = true;
                 document.getElementById('preorder-qty').required = true;
+                document.getElementById('preorder-price').required = true;
                 document.getElementById('preorder-date').required = true;
             }
+            calculateSale();
         };
 
-        function renderAddSale() {
-            const select = document.getElementById('sale-product');
-            select.innerHTML = '<option value="">-- اختر المنتج من المخزون --</option>' + 
-                purchases.map(p => {
-                    const available = getAvailableQuantity(p.id);
-                    return `<option value="${p.id}" ${available <= 0 ? 'disabled' : ''}>${p.productName} (متاح: ${available})</option>`;
-                }).join('');
+        function renderAddSaleGrid() {
+            const grid = document.getElementById('sale-product-grid');
+            selectedProductForSale = null;
+            document.getElementById('selected-product-id').value = '';
             
             document.getElementById('sale-form').reset();
             document.getElementById('sale-summary').classList.add('hidden');
+            document.getElementById('preorder-summary').classList.add('hidden');
             document.getElementById('sale-available-qty').textContent = '';
+
+            if(purchases.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-4 font-medium">لا توجد منتجات في المخزون. أضف منتجات أولاً.</p>';
+                return;
+            }
+
+            grid.innerHTML = purchases.map(p => {
+                const available = getAvailableQuantity(p.id);
+                const imageHtml = p.productImage 
+                    ? `<img src="${p.productImage}" class="w-24 h-24 object-cover rounded-xl border border-gray-100 shrink-0">` 
+                    : `<div class="w-24 h-24 bg-gray-100 rounded-xl border border-gray-100 flex items-center justify-center shrink-0"><i data-lucide="image" class="w-8 h-8 text-gray-300"></i></div>`;
+                
+                return `
+                <div onclick="selectProductForSale('${p.id}')" id="grid-item-${p.id}" class="product-card cursor-pointer bg-white border-2 border-gray-100 p-4 rounded-2xl hover:border-emerald-300 hover:shadow-md flex items-center gap-4 relative overflow-hidden transition-all">
+                    ${available <= 0 ? '<div class="absolute inset-0 bg-white/70 z-10 flex items-center justify-center backdrop-blur-[2px]"><span class="bg-red-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">نفدت الكمية</span></div>' : ''}
+                    
+                    <!-- أيقونة الاختيار (تظهر عند التحديد) -->
+                    <div class="selection-check absolute top-4 left-4 bg-emerald-500 text-white rounded-full p-1 opacity-0 transform scale-50 transition-all">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </div>
+
+                    ${imageHtml}
+                    <div class="flex-1 space-y-2 text-right">
+                        <h4 class="font-bold text-gray-800 text-lg leading-tight">${p.productName}</h4>
+                        <p class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="user" class="w-3 h-3"></i> التاجر: ${p.merchantName || 'غير محدد'}</p>
+                        
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-50 mt-2">
+                            <div class="text-xs font-medium text-gray-600">
+                                متاح: <span class="${available > 0 ? 'text-emerald-600 font-bold text-base' : 'text-red-500 font-bold text-base'}">${available}</span> قطعة
+                            </div>
+                            <div class="text-sm font-black text-blue-600 flex items-center gap-1">
+                                ${p.sellingPrice} ${getIcon('w-4 h-4')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            if (window.lucide) lucide.createIcons();
         }
 
-        document.getElementById('sale-product').addEventListener('change', function(e) {
-            const purchaseId = e.target.value;
-            const purchase = purchases.find(p => p.id === purchaseId);
-            if(purchase) {
-                const available = getAvailableQuantity(purchaseId);
-                document.getElementById('sale-available-qty').textContent = `(المتاح: ${available} قطعة)`;
-                document.getElementById('sale-qty').max = available;
-                document.getElementById('sale-price').value = purchase.sellingPrice || '';
-                calculateSale();
-            } else {
-                document.getElementById('sale-summary').classList.add('hidden');
-                document.getElementById('sale-available-qty').textContent = '';
-            }
-        });
-
-        function calculateSale() {
-            const purchaseId = document.getElementById('sale-product').value;
-            const purchase = purchases.find(p => p.id === purchaseId);
+        window.selectProductForSale = function(id) {
+            const purchase = purchases.find(p => p.id === id);
             if(!purchase) return;
 
-            const qty = Number(document.getElementById('sale-qty').value) || 0;
-            const price = Number(document.getElementById('sale-price').value) || 0;
-            const cost = Number(purchase.costPerItem);
-            
-            const profitPerItem = price - cost;
-            const totalProfit = profitPerItem * qty;
+            // تحديث تصميم الشبكة المرئية
+            document.querySelectorAll('.product-card').forEach(el => el.classList.remove('selected'));
+            const selectedItem = document.getElementById(`grid-item-${id}`);
+            if(selectedItem) selectedItem.classList.add('selected');
 
-            document.getElementById('sale-summary').classList.remove('hidden');
-            document.getElementById('sale-cost-label').innerHTML = formatRiyal(cost);
+            const errorElement = document.getElementById('sale-product-error');
+            if (errorElement) errorElement.classList.add('hidden');
             
-            const profitEl = document.getElementById('sale-profit-per-item-label');
-            profitEl.innerHTML = formatRiyal(profitPerItem);
-            profitEl.className = `font-bold ${profitPerItem >= 0 ? 'text-emerald-600' : 'text-red-500'}`;
+            selectedProductForSale = purchase;
+            const selectedProductIdElement = document.getElementById('selected-product-id');
+            if (selectedProductIdElement) selectedProductIdElement.value = purchase.id;
+            
+            const available = getAvailableQuantity(id);
+            const saleAvailableQtyElement = document.getElementById('sale-available-qty');
+            if (saleAvailableQtyElement) saleAvailableQtyElement.textContent = `(المتاح: ${available} قطعة)`;
+            
+            const saleQtyElement = document.getElementById('sale-qty');
+            if (saleQtyElement) {
+                saleQtyElement.max = available;
+                saleQtyElement.value = 1; // تعيين الكمية لـ 1 تلقائياً
+            }
+            
+            // تعبئة الأسعار التلقائية
+            const salePriceElement = document.getElementById('sale-price');
+            if (salePriceElement) salePriceElement.value = purchase.sellingPrice || '';
+            
+            const preorderQtyElement = document.getElementById('preorder-qty');
+            if (preorderQtyElement) preorderQtyElement.value = 1; // تعيين الكمية لـ 1 تلقائياً
 
-            const totalEl = document.getElementById('sale-total-profit-label');
-            totalEl.innerHTML = formatRiyal(totalProfit);
-            totalEl.className = `text-xl font-black ${totalProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`;
+            const preorderPriceElement = document.getElementById('preorder-price');
+            if (preorderPriceElement) preorderPriceElement.value = purchase.sellingPrice || '';
+            
+            // وضع اسم المنتج في الطلب المسبق
+            const preorderProductElement = document.getElementById('preorder-product');
+            if (preorderProductElement) preorderProductElement.value = purchase.productName;
+
+            calculateSale();
+        };
+
+        function calculateSale() {
+            if(!selectedProductForSale) return;
+            const cost = Number(selectedProductForSale.costPerItem);
+
+            if (saleMode === 'direct') {
+                const qty = Number(document.getElementById('sale-qty').value) || 0;
+                const price = Number(document.getElementById('sale-price').value) || 0;
+                const profitPerItem = price - cost;
+                const totalProfit = profitPerItem * qty;
+                const totalPrice = price * qty; 
+
+                if (qty > 0 && price > 0) {
+                    document.getElementById('sale-summary').classList.remove('hidden');
+                    document.getElementById('sale-cost-label').innerHTML = formatRiyal(cost);
+                    
+                    const profitEl = document.getElementById('sale-profit-per-item-label');
+                    profitEl.innerHTML = formatRiyal(profitPerItem);
+                    profitEl.className = `font-bold ${profitPerItem >= 0 ? 'text-emerald-600' : 'text-red-500'}`;
+
+                    const totalEl = document.getElementById('sale-total-profit-label');
+                    totalEl.innerHTML = formatRiyal(totalProfit);
+                    totalEl.className = `text-xl font-black ${totalProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`;
+                    
+                    const totalPriceEl = document.getElementById('sale-total-price-label');
+                    if(totalPriceEl) totalPriceEl.innerHTML = formatRiyal(totalPrice);
+                } else {
+                    document.getElementById('sale-summary').classList.add('hidden');
+                }
+            } else {
+                // حسابات الطلب المسبق
+                const qty = Number(document.getElementById('preorder-qty').value) || 0;
+                const price = Number(document.getElementById('preorder-price').value) || 0;
+                const totalAmount = qty * price;
+                
+                if (qty > 0 && price > 0) {
+                    document.getElementById('preorder-summary').classList.remove('hidden');
+                    document.getElementById('preorder-total-label').innerHTML = formatRiyal(totalAmount);
+                } else {
+                    document.getElementById('preorder-summary').classList.add('hidden');
+                }
+            }
         }
 
-        ['sale-qty', 'sale-price'].forEach(id => {
-            document.getElementById(id).addEventListener('input', calculateSale);
+        ['sale-qty', 'sale-price', 'preorder-qty', 'preorder-price'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', calculateSale);
         });
 
         document.getElementById('sale-form').addEventListener('submit', (e) => {
             e.preventDefault();
+            
+            if(!selectedProductForSale) {
+                const errorElement = document.getElementById('sale-product-error');
+                if (errorElement) errorElement.classList.remove('hidden');
+                return;
+            }
+
+            const available = getAvailableQuantity(selectedProductForSale.id);
 
             if (saleMode === 'direct') {
-                const purchaseId = document.getElementById('sale-product').value;
-                const purchase = purchases.find(p => p.id === purchaseId);
                 const qty = Number(document.getElementById('sale-qty').value);
                 const price = Number(document.getElementById('sale-price').value);
                 const paymentMethod = document.getElementById('sale-payment-method').value;
                 
-                if(!purchase || qty <= 0) return;
-                
-                const available = getAvailableQuantity(purchaseId);
                 if(qty > available) {
                     alert('الكمية المباعة تتجاوز المخزون المتاح!');
                     return;
                 }
 
-                const cost = Number(purchase.costPerItem);
+                const cost = Number(selectedProductForSale.costPerItem);
                 const profitPerItem = price - cost;
                 
                 const sale = {
                     id: Date.now().toString(),
                     date: new Date().toISOString(),
-                    purchaseId: purchaseId,
-                    productName: purchase.productName,
+                    purchaseId: selectedProductForSale.id,
+                    productName: selectedProductForSale.productName,
                     quantity: qty,
                     sellingPrice: price,
                     paymentMethod: paymentMethod,
@@ -1026,17 +1154,27 @@
 
             } else if (saleMode === 'preorder') {
                 const buyer = document.getElementById('preorder-buyer').value;
-                const product = document.getElementById('preorder-product').value;
-                const qty = document.getElementById('preorder-qty').value;
+                const productDisplay = document.getElementById('preorder-product').value;
+                const qty = Number(document.getElementById('preorder-qty').value);
+                const price = Number(document.getElementById('preorder-price').value);
                 const date = document.getElementById('preorder-date').value;
+
+                if(qty > available) {
+                    alert('الكمية المطلوبة تتجاوز المخزون المتاح!');
+                    return;
+                }
 
                 const preorder = {
                     id: Date.now().toString(),
                     createdAt: new Date().toISOString(),
+                    purchaseId: selectedProductForSale.id,
                     buyerName: buyer,
-                    productName: product,
+                    productName: productDisplay,
                     quantity: qty,
-                    deliveryDate: date
+                    sellingPrice: price,
+                    totalAmount: qty * price,
+                    deliveryDate: date,
+                    status: 'pending' // 'pending' or 'delivered'
                 };
 
                 preorders.unshift(preorder);
@@ -1048,7 +1186,7 @@
         function renderSalesList() {
             const tbody = document.getElementById('sales-tbody');
             if(sales.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد مبيعات مسجلة حتى الآن.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-gray-500">لا توجد مبيعات مسجلة حتى الآن.</td></tr>';
                 return;
             }
 
@@ -1080,25 +1218,96 @@
             }
         };
 
+        // --- إدارة تسليم الطلبات المسبقة ونافذة التأكيد Modal ---
+        let preorderToDeliver = null;
+
+        window.openDeliveryModal = function(id) {
+            preorderToDeliver = id;
+            document.getElementById('delivery-modal').classList.remove('hidden');
+        };
+
+        window.closeDeliveryModal = function() {
+            preorderToDeliver = null;
+            document.getElementById('delivery-modal').classList.add('hidden');
+        };
+
+        window.confirmDelivery = function() {
+            if(!preorderToDeliver) return;
+
+            const id = preorderToDeliver;
+            const paymentMethod = document.getElementById('delivery-payment-method').value;
+
+            const preorderIndex = preorders.findIndex(p => p.id === id);
+            if(preorderIndex === -1) {
+                closeDeliveryModal();
+                return;
+            }
+
+            const preorder = preorders[preorderIndex];
+            const purchase = purchases.find(p => p.id === preorder.purchaseId);
+            
+            if(!purchase) {
+                alert('تنبيه: تم حذف بيانات المنتج الأصلي من المشتريات، سيتم تسجيل البيع ولكن بدون حساب التكلفة الدقيقة.');
+            }
+
+            const cost = purchase ? Number(purchase.costPerItem) : 0;
+            const profitPerItem = Number(preorder.sellingPrice) - cost;
+            
+            const sale = {
+                id: Date.now().toString(),
+                date: new Date().toISOString(),
+                purchaseId: preorder.purchaseId,
+                productName: preorder.productName,
+                quantity: Number(preorder.quantity),
+                sellingPrice: Number(preorder.sellingPrice),
+                paymentMethod: paymentMethod, // تم أخذها من النافذة المنبثقة
+                costPerItem: cost,
+                profit: profitPerItem * Number(preorder.quantity),
+                revenue: Number(preorder.totalAmount)
+            };
+
+            // 1. إضافة المبيعات
+            sales.unshift(sale);
+            saveSales();
+
+            // 2. تحديث حالة الطلب إلى تم التسليم
+            preorders[preorderIndex].status = 'delivered';
+            savePreorders();
+            
+            closeDeliveryModal();
+            renderPreordersList();
+        };
+
         function renderPreordersList() {
             const tbody = document.getElementById('preorders-tbody');
             if(preorders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد طلبات مسبقة حتى الآن.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-gray-500">لا توجد طلبات مسبقة حتى الآن.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = preorders.map(p => {
-                const isPastDue = new Date(p.deliveryDate) < new Date();
+                const isDelivered = p.status === 'delivered';
+                const isPastDue = !isDelivered && new Date(p.deliveryDate) < new Date();
+                
                 return `
-                <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
-                    <td class="p-4 text-gray-500 text-sm">${new Date(p.createdAt).toLocaleDateString('ar-SA')}</td>
-                    <td class="p-4 font-bold text-gray-800">${p.buyerName}</td>
+                <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100 ${isDelivered ? 'opacity-60 bg-gray-50' : ''}">
+                    <td class="p-4">
+                        <p class="font-bold text-gray-800">${p.buyerName}</p>
+                        <p class="text-xs text-gray-400 mt-1">${new Date(p.createdAt).toLocaleDateString('ar-SA')}</p>
+                    </td>
                     <td class="p-4 font-medium text-emerald-700">${p.productName}</td>
                     <td class="p-4 text-center">${p.quantity}</td>
+                    <td class="p-4 text-center font-bold text-blue-600">${formatRiyal(p.totalAmount)}</td>
                     <td class="p-4 text-center font-bold ${isPastDue ? 'text-red-500' : 'text-orange-600'}" dir="ltr">
                         ${p.deliveryDate ? new Date(p.deliveryDate).toLocaleDateString('ar-SA') : '-'}
                     </td>
+                    <td class="p-4 text-center">
+                        ${isDelivered 
+                            ? '<span class="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs font-bold border border-gray-300">مكتمل</span>' 
+                            : '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">قيد الانتظار</span>'}
+                    </td>
                     <td class="p-4 flex justify-center gap-2">
+                        ${!isDelivered ? `<button onclick="openDeliveryModal('${p.id}')" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg" title="تم التسليم واستلام المبلغ"><i data-lucide="check-circle" class="w-4 h-4"></i></button>` : ''}
                         <button onclick="deletePreorder('${p.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg" title="حذف الطلب"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </td>
                 </tr>
@@ -1114,6 +1323,7 @@
             }
         };
 
+        // --- التقارير والمحفظة ---
         function renderDashboard() {
             let totalCapital = 0, expectedProfit = 0;
             const merchants = new Set();
@@ -1202,7 +1412,6 @@
             const p = purchases.find(p => p.id === id);
             if(!p) return;
             
-            // عرض الصورة في التفاصيل إن وجدت
             const detailImage = document.getElementById('detail-image');
             const placeholder = document.getElementById('detail-image-placeholder');
             if (p.productImage) {
@@ -1238,9 +1447,7 @@
 
             document.getElementById('detail-edit-btn').onclick = () => editPurchase(p.id);
             document.getElementById('detail-delete-btn').onclick = () => {
-                if(deletePurchase(p.id)) {
-                    switchView('list');
-                }
+                if(deletePurchase(p.id)) { switchView('list'); }
             };
             switchView('details');
         };
@@ -1259,7 +1466,6 @@
             document.getElementById('form-targetMargin').value = p.targetMargin || '30';
             document.getElementById('form-sellingPrice').value = p.sellingPrice || '';
             
-            // تحميل الصورة إن وجدت
             if(p.productImage) {
                 currentProductImage = p.productImage;
                 showImagePreview(p.productImage);

@@ -171,21 +171,15 @@
                             
                             <!-- رفع الصورة -->
                             <div class="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                <label class="block text-sm font-medium text-gray-700 mb-3">صورة المنتج (اختياري)</label>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-20 h-20 bg-white rounded-xl border border-gray-200 overflow-hidden flex items-center justify-center shrink-0 shadow-sm relative">
-                                        <img id="form-image-preview" src="" class="hidden w-full h-full object-cover">
-                                        <i data-lucide="image" id="form-image-placeholder" class="text-gray-300 w-8 h-8"></i>
+                                <label class="block text-sm font-medium text-gray-700 mb-3">صور المنتج (صورتين كحد أقصى)</label>
+                                <div class="flex flex-col gap-4">
+                                    <div id="form-images-container" class="flex gap-4 flex-wrap">
+                                        <!-- سيتم إضافة الصور هنا -->
                                     </div>
-                                    <div class="space-y-2">
-                                        <label class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm">
-                                            <i data-lucide="upload" class="w-4 h-4"></i> اختر صورة
-                                            <input type="file" id="form-product-image" accept="image/*" class="hidden">
-                                        </label>
-                                        <div>
-                                            <button type="button" id="form-remove-image" class="hidden text-red-500 text-sm font-medium hover:underline">حذف الصورة</button>
-                                        </div>
-                                    </div>
+                                    <label id="upload-label-btn" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm w-max">
+                                        <i data-lucide="upload" class="w-4 h-4"></i> أضف صورة
+                                        <input type="file" id="form-product-image" accept="image/*" class="hidden">
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -326,9 +320,14 @@
                     <div class="p-8 bg-emerald-50 border-b border-emerald-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <div class="flex items-center gap-6">
                             <!-- عرض الصورة في التفاصيل -->
-                            <div class="w-24 h-24 bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden flex items-center justify-center shrink-0">
-                                <img id="detail-image" src="" class="hidden w-full h-full object-cover">
-                                <i data-lucide="image" id="detail-image-placeholder" class="text-emerald-200 w-10 h-10"></i>
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-28 h-28 bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden flex items-center justify-center shrink-0">
+                                    <img id="detail-main-image" src="" class="hidden w-full h-full object-cover">
+                                    <i data-lucide="image" id="detail-image-placeholder" class="text-emerald-200 w-10 h-10"></i>
+                                </div>
+                                <div id="detail-thumbnails" class="flex gap-2 hidden">
+                                    <!-- يتم إدراج الصور المصغرة هنا -->
+                                </div>
                             </div>
                             <div>
                                 <h1 id="detail-title" class="text-3xl font-bold text-emerald-900 mb-2">-</h1>
@@ -665,7 +664,10 @@
         let preorders = JSON.parse(localStorage.getItem('merchant_preorders')) || [];
         let editingId = null;
         let saleMode = 'direct'; // 'direct' or 'preorder'
-        let currentProductImage = "";
+        
+        let currentProductImages = []; // Array of images (up to 2)
+        let primaryImageIndex = 0; // Which image is primary
+
         let selectedProductForSale = null; // تخزين المنتج المحدد حالياً في شبكة المبيعات
 
         // الحفظ التلقائي
@@ -720,6 +722,11 @@
         document.getElementById('form-product-image').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
+            if (currentProductImages.length >= 2) {
+                alert("عذراً، يمكنك إضافة صورتين كحد أقصى.");
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
@@ -738,33 +745,64 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    currentProductImage = dataUrl;
-                    showImagePreview(dataUrl);
+                    
+                    currentProductImages.push(dataUrl);
+                    if (currentProductImages.length === 1) {
+                        primaryImageIndex = 0;
+                    }
+                    renderImagePreviews();
                 }
                 img.src = event.target.result;
             }
             reader.readAsDataURL(file);
+            e.target.value = ""; // تفريغ حقل الملف للسماح بإعادة نفس الصورة لو رغب
         });
 
-        document.getElementById('form-remove-image').addEventListener('click', clearImagePreview);
+        function renderImagePreviews() {
+            const container = document.getElementById('form-images-container');
+            container.innerHTML = '';
+            
+            currentProductImages.forEach((src, index) => {
+                const isPrimary = index === primaryImageIndex;
+                const html = `
+                    <div class="relative w-24 h-24 rounded-xl border-2 ${isPrimary ? 'border-emerald-500' : 'border-gray-200'} overflow-hidden shadow-sm group">
+                        <img src="${src}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col justify-center items-center gap-2 transition-opacity">
+                            ${!isPrimary ? `<button type="button" onclick="setPrimaryImage(${index})" class="text-[10px] bg-emerald-500 text-white px-2 py-1 rounded hover:bg-emerald-600 w-16">رئيسية</button>` : `<span class="text-[10px] bg-emerald-600 text-white px-2 py-1 rounded w-16 text-center">الرئيسية</span>`}
+                            <button type="button" onclick="removeImage(${index})" class="text-[10px] bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-16">حذف</button>
+                        </div>
+                        ${isPrimary ? `<div class="absolute top-1 right-1 bg-emerald-500 text-white rounded-full p-0.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>` : ''}
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+            
+            const uploadLabel = document.getElementById('upload-label-btn');
+            if (currentProductImages.length >= 2) {
+                uploadLabel.classList.add('hidden');
+            } else {
+                uploadLabel.classList.remove('hidden');
+            }
+        }
 
-        function showImagePreview(base64Str) {
-            const preview = document.getElementById('form-image-preview');
-            const placeholder = document.getElementById('form-image-placeholder');
-            const removeBtn = document.getElementById('form-remove-image');
-            preview.src = base64Str;
-            preview.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-            removeBtn.classList.remove('hidden');
+        window.setPrimaryImage = function(idx) {
+            primaryImageIndex = idx;
+            renderImagePreviews();
+        }
+
+        window.removeImage = function(idx) {
+            currentProductImages.splice(idx, 1);
+            if (primaryImageIndex >= currentProductImages.length) {
+                primaryImageIndex = Math.max(0, currentProductImages.length - 1);
+            }
+            renderImagePreviews();
         }
 
         function clearImagePreview() {
-            currentProductImage = "";
+            currentProductImages = [];
+            primaryImageIndex = 0;
             document.getElementById('form-product-image').value = "";
-            document.getElementById('form-image-preview').src = "";
-            document.getElementById('form-image-preview').classList.add('hidden');
-            document.getElementById('form-image-placeholder').classList.remove('hidden');
-            document.getElementById('form-remove-image').classList.add('hidden');
+            renderImagePreviews();
         }
 
         // --- حسابات المنتجات الأساسية ---
@@ -828,7 +866,9 @@
                 merchantName: document.getElementById('form-merchantName').value,
                 location: document.getElementById('form-location').value,
                 productName: document.getElementById('form-productName').value,
-                productImage: currentProductImage,
+                productImages: currentProductImages,
+                primaryImageIndex: primaryImageIndex,
+                productImage: currentProductImages.length > 0 ? currentProductImages[primaryImageIndex] : "", // للتوافق القديم والسهولة
                 quantity: document.getElementById('form-quantity').value,
                 wholesalePrice: document.getElementById('form-wholesalePrice').value,
                 shippingCost: document.getElementById('form-shippingCost').value,
@@ -891,8 +931,11 @@
                 return;
             }
             tbody.innerHTML = filtered.map(p => {
-                const imageHtml = p.productImage 
-                    ? `<img src="${p.productImage}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0">` 
+                // استخدام الصورة الرئيسية إن وجدت
+                const primaryImage = p.productImage || (p.productImages && p.productImages.length > 0 ? p.productImages[p.primaryImageIndex || 0] : null);
+                
+                const imageHtml = primaryImage 
+                    ? `<img src="${primaryImage}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0">` 
                     : `<div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0"><i data-lucide="image" class="w-5 h-5 text-gray-400"></i></div>`;
                 
                 return `
@@ -987,8 +1030,9 @@
 
             grid.innerHTML = purchases.map(p => {
                 const available = getAvailableQuantity(p.id);
-                const imageHtml = p.productImage 
-                    ? `<img src="${p.productImage}" class="w-24 h-24 object-cover rounded-xl border border-gray-100 shrink-0">` 
+                const primaryImage = p.productImage || (p.productImages && p.productImages.length > 0 ? p.productImages[p.primaryImageIndex || 0] : null);
+                const imageHtml = primaryImage 
+                    ? `<img src="${primaryImage}" class="w-24 h-24 object-cover rounded-xl border border-gray-100 shrink-0">` 
                     : `<div class="w-24 h-24 bg-gray-100 rounded-xl border border-gray-100 flex items-center justify-center shrink-0"><i data-lucide="image" class="w-8 h-8 text-gray-300"></i></div>`;
                 
                 return `
@@ -1412,16 +1456,35 @@
             const p = purchases.find(p => p.id === id);
             if(!p) return;
             
-            const detailImage = document.getElementById('detail-image');
+            // جلب الصور للمنتج (مع دعم البيانات القديمة)
+            const images = (p.productImages && p.productImages.length > 0) ? p.productImages : (p.productImage ? [p.productImage] : []);
+            const pIndex = p.primaryImageIndex !== undefined ? p.primaryImageIndex : 0;
+            
+            const detailMainImage = document.getElementById('detail-main-image');
             const placeholder = document.getElementById('detail-image-placeholder');
-            if (p.productImage) {
-                detailImage.src = p.productImage;
-                detailImage.classList.remove('hidden');
+            const thumbnails = document.getElementById('detail-thumbnails');
+            
+            if (images.length > 0) {
+                detailMainImage.src = images[pIndex] || images[0];
+                detailMainImage.classList.remove('hidden');
                 placeholder.classList.add('hidden');
+                
+                // عرض المصغرات إذا كانت هناك أكثر من صورة
+                if (images.length > 1) {
+                    thumbnails.innerHTML = images.map((src, idx) => `
+                        <img src="${src}" onclick="document.getElementById('detail-main-image').src='${src}'" class="w-12 h-12 object-cover rounded-lg border-2 cursor-pointer hover:border-emerald-500 ${idx === pIndex ? 'border-emerald-500' : 'border-gray-200'} transition-colors shadow-sm">
+                    `).join('');
+                    thumbnails.classList.remove('hidden');
+                } else {
+                    thumbnails.innerHTML = '';
+                    thumbnails.classList.add('hidden');
+                }
             } else {
-                detailImage.src = "";
-                detailImage.classList.add('hidden');
+                detailMainImage.src = "";
+                detailMainImage.classList.add('hidden');
                 placeholder.classList.remove('hidden');
+                thumbnails.innerHTML = '';
+                thumbnails.classList.add('hidden');
             }
 
             document.getElementById('detail-title').textContent = p.productName;
@@ -1466,12 +1529,18 @@
             document.getElementById('form-targetMargin').value = p.targetMargin || '30';
             document.getElementById('form-sellingPrice').value = p.sellingPrice || '';
             
-            if(p.productImage) {
-                currentProductImage = p.productImage;
-                showImagePreview(p.productImage);
+            // استرجاع الصور (مع التوافق مع الأنظمة السابقة)
+            if (p.productImages && p.productImages.length > 0) {
+                currentProductImages = [...p.productImages];
+                primaryImageIndex = p.primaryImageIndex !== undefined ? p.primaryImageIndex : 0;
+            } else if (p.productImage) {
+                currentProductImages = [p.productImage];
+                primaryImageIndex = 0;
             } else {
-                clearImagePreview();
+                currentProductImages = [];
+                primaryImageIndex = 0;
             }
+            renderImagePreviews();
 
             switchView('add');
         };

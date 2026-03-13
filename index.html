@@ -169,19 +169,24 @@
                                 <input type="text" id="form-productName" required placeholder="مثال: سماعات بلوتوث M10" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
                             </div>
                             
-                            <!-- رفع الصورة -->
-                            <div class="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                <label class="block text-sm font-medium text-gray-700 mb-3">صور المنتج (صورتين كحد أقصى)</label>
-                                <div class="flex flex-col gap-4">
-                                    <div id="form-images-container" class="flex gap-4 flex-wrap">
+                            <!-- رفع الصورة المحسن والداعم للهواتف -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">صور المنتج (صورتين كحد أقصى)</label>
+                                <div id="image-dropzone" class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:bg-gray-100 transition-colors relative flex flex-col items-center justify-center min-h-[160px]">
+                                    <div id="form-images-container" class="flex gap-4 flex-wrap justify-center w-full hidden mb-4">
                                         <!-- سيتم إضافة الصور هنا -->
                                     </div>
-                                    <label id="upload-label-btn" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 shadow-sm w-max">
-                                        <i data-lucide="upload" class="w-4 h-4"></i> أضف صورة
-                                        <input type="file" id="form-product-image" accept="image/*" class="hidden">
-                                    </label>
+                                    <div id="upload-label-btn" class="cursor-pointer flex flex-col items-center justify-center w-full" onclick="document.getElementById('form-product-image').click()">
+                                        <div class="bg-emerald-100 text-emerald-600 p-3 rounded-full mb-3 pointer-events-none">
+                                            <i data-lucide="image-plus" class="w-6 h-6"></i>
+                                        </div>
+                                        <span class="text-sm font-bold text-gray-700 pointer-events-none">اضغط هنا لإضافة صورة</span>
+                                        <span class="text-xs text-gray-500 mt-1 pointer-events-none">أو التقط صورة بكاميرا الهاتف</span>
+                                    </div>
+                                    <input type="file" id="form-product-image" accept="image/*" class="hidden">
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -307,6 +312,9 @@
                         <h2 class="text-2xl font-bold text-gray-800">تفاصيل المنتج</h2>
                     </div>
                     <div class="flex items-center gap-2">
+                        <button id="detail-restock-btn" class="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors font-bold">
+                            <i data-lucide="package-plus" class="w-4 h-4"></i> زيادة المخزون
+                        </button>
                         <button id="detail-edit-btn" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
                             <i data-lucide="edit" class="w-4 h-4"></i> تعديل
                         </button>
@@ -338,19 +346,17 @@
                             </div>
                         </div>
                         <div class="text-left bg-white p-4 rounded-xl border border-emerald-100 shadow-sm w-full md:w-auto">
-                            <p class="text-sm text-emerald-600 mb-1 font-bold">الكمية المتبقية</p>
-                            <p class="text-3xl font-black text-emerald-800"><span id="detail-qty">0</span> <span class="text-lg font-normal">قطعة</span></p>
+                            <p class="text-sm text-emerald-600 mb-1 font-bold">الكمية المتبقية / الإجمالية</p>
+                            <p class="text-3xl font-black text-emerald-800"><span id="detail-qty">0</span> <span class="text-lg font-normal text-gray-400">/ <span id="detail-total-qty">0</span></span></p>
                         </div>
                     </div>
 
                     <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="space-y-4">
-                            <h3 class="text-lg font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">تفاصيل التكلفة</h3>
-                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">سعر الجملة</span><span id="detail-wholesale" class="font-semibold text-gray-800">0.00</span></div>
-                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">تكلفة الشحن</span><span id="detail-shipping" class="font-semibold text-gray-800">0.00</span></div>
-                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">تكلفة التغليف</span><span id="detail-packaging" class="font-semibold text-gray-800">0.00</span></div>
+                            <h3 class="text-lg font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">تفاصيل التكلفة (لإجمالي المخزون)</h3>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">إجمالي التكلفة (جملة + شحن)</span><span id="detail-wholesale" class="font-semibold text-gray-800">0.00</span></div>
                             <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
-                                <span class="text-sm font-bold text-gray-700">التكلفة للقطعة الواحدة</span>
+                                <span class="text-sm font-bold text-gray-700">متوسط التكلفة للقطعة الواحدة</span>
                                 <span id="detail-costPerItem" class="font-semibold text-orange-600">0.00</span>
                             </div>
                         </div>
@@ -358,7 +364,7 @@
                         <div class="space-y-4">
                             <h3 class="text-lg font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">تفاصيل الأرباح</h3>
                             <div class="flex justify-between items-center"><span class="text-sm text-gray-500">سعر البيع للقطعة</span><span id="detail-sellingPrice" class="font-semibold text-gray-800">0.00</span></div>
-                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">الربح في القطعة</span><span id="detail-profitPerItem" class="font-semibold">0.00</span></div>
+                            <div class="flex justify-between items-center"><span class="text-sm text-gray-500">متوسط الربح في القطعة</span><span id="detail-profitPerItem" class="font-semibold">0.00</span></div>
                             <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
                                 <span class="text-sm font-bold text-gray-700">إجمالي الربح المتوقع</span>
                                 <span id="detail-totalProfit" class="font-black text-xl">0.00</span>
@@ -569,6 +575,30 @@
                         </div>
                     </div>
 
+                    <!-- جدول مبيعات المخزون الجديد/القديم -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden md:col-span-2 mt-2">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="layers" class="w-5 h-5 text-emerald-600"></i> تفصيل مبيعات المنتجات (مخزون قديم / جديد)
+                            </h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-right">
+                                <thead class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                    <tr>
+                                        <th class="p-4 font-semibold">المنتج</th>
+                                        <th class="p-4 font-semibold text-center">إجمالي المبيعات</th>
+                                        <th class="p-4 font-semibold text-center text-blue-600">مبيعات المخزون الأساسي</th>
+                                        <th class="p-4 font-semibold text-center text-emerald-600">مبيعات المخزون المضاف</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-inventory-sales-tbody" class="divide-y divide-gray-100">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 class="text-gray-500 mb-4 flex items-center gap-2"><i data-lucide="user" class="w-5 h-5"></i> أكثر تاجر تم التعامل معه</h3>
                         <p id="rep-merchant" class="text-2xl font-bold text-gray-800">-</p>
@@ -638,6 +668,30 @@
                     <div class="flex gap-3 justify-end">
                         <button onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-50 font-medium transition-colors">إلغاء</button>
                         <button onclick="confirmDelivery()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-md">تأكيد التسليم</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نافذة زيادة المخزون (Restock Modal) -->
+            <div id="restock-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center transition-opacity print-hidden">
+                <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl transform transition-all border border-blue-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="package-plus" class="text-blue-600 w-5 h-5"></i> زيادة كمية المخزون
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-4">أضف كمية جديدة لهذا المنتج. سيتم دمجها وحساب متوسط التكلفة الجديد تلقائياً.</p>
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المضافة *</label>
+                            <input type="number" id="restock-qty-input" min="1" placeholder="مثال: 50" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">تكلفة الجملة للكمية المضافة (اختياري)</label>
+                            <input type="number" id="restock-cost-input" min="0" step="0.01" placeholder="إجمالي تكلفة الكمية الجديدة" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button onclick="closeRestockModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-50 font-medium transition-colors">إلغاء</button>
+                        <button onclick="confirmRestock()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors shadow-md">إضافة للمخزون</button>
                     </div>
                 </div>
             </div>
@@ -718,10 +772,53 @@
             if (window.lucide) { lucide.createIcons(); }
         }
 
-        // --- معالجة الصور ---
+        // --- معالجة الصور المحسنة (Drag & Drop) ---
+        const dropzone = document.getElementById('image-dropzone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => {
+                dropzone.classList.add('border-emerald-500', 'bg-emerald-50');
+                dropzone.classList.remove('border-gray-300', 'bg-gray-50');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => {
+                dropzone.classList.remove('border-emerald-500', 'bg-emerald-50');
+                dropzone.classList.add('border-gray-300', 'bg-gray-50');
+            }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if(files.length > 0) handleImageFile(files[0]);
+        });
+
+        document.getElementById('form-product-image').addEventListener('click', function(e) {
+            e.target.value = null; // تفريغ الحقل قبل الاختيار ليتمكن من اختيار نفس الصورة أو تفعيل الكاميرا بسلاسة
+        });
+
         document.getElementById('form-product-image').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            if (e.target.files.length > 0) {
+                handleImageFile(e.target.files[0]);
+            }
+        });
+
+        function handleImageFile(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                alert('الرجاء اختيار ملف صورة صالح.');
+                return;
+            }
             if (currentProductImages.length >= 2) {
                 alert("عذراً، يمكنك إضافة صورتين كحد أقصى.");
                 return;
@@ -755,23 +852,28 @@
                 img.src = event.target.result;
             }
             reader.readAsDataURL(file);
-            e.target.value = ""; // تفريغ حقل الملف للسماح بإعادة نفس الصورة لو رغب
-        });
+        }
 
         function renderImagePreviews() {
             const container = document.getElementById('form-images-container');
             container.innerHTML = '';
             
+            if(currentProductImages.length === 0) {
+                container.classList.add('hidden');
+            } else {
+                container.classList.remove('hidden');
+            }
+            
             currentProductImages.forEach((src, index) => {
                 const isPrimary = index === primaryImageIndex;
                 const html = `
-                    <div class="relative w-24 h-24 rounded-xl border-2 ${isPrimary ? 'border-emerald-500' : 'border-gray-200'} overflow-hidden shadow-sm group">
+                    <div class="relative w-28 h-28 rounded-xl border-2 ${isPrimary ? 'border-emerald-500 shadow-md' : 'border-gray-200'} overflow-hidden group">
                         <img src="${src}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col justify-center items-center gap-2 transition-opacity">
-                            ${!isPrimary ? `<button type="button" onclick="setPrimaryImage(${index})" class="text-[10px] bg-emerald-500 text-white px-2 py-1 rounded hover:bg-emerald-600 w-16">رئيسية</button>` : `<span class="text-[10px] bg-emerald-600 text-white px-2 py-1 rounded w-16 text-center">الرئيسية</span>`}
-                            <button type="button" onclick="removeImage(${index})" class="text-[10px] bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-16">حذف</button>
+                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col justify-center items-center gap-2 transition-opacity z-10">
+                            ${!isPrimary ? `<button type="button" onclick="setPrimaryImage(${index}); event.preventDefault();" class="text-xs bg-emerald-500 text-white px-2 py-1 rounded hover:bg-emerald-600 w-20">تعيين رئيسية</button>` : `<span class="text-xs bg-emerald-600 text-white px-2 py-1 rounded w-20 text-center">الرئيسية</span>`}
+                            <button type="button" onclick="removeImage(${index}); event.preventDefault();" class="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-20">حذف الصورة</button>
                         </div>
-                        ${isPrimary ? `<div class="absolute top-1 right-1 bg-emerald-500 text-white rounded-full p-0.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>` : ''}
+                        ${isPrimary ? `<div class="absolute top-1 right-1 bg-emerald-500 text-white rounded-full p-1 z-0"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>` : ''}
                     </div>
                 `;
                 container.innerHTML += html;
@@ -868,7 +970,7 @@
                 productName: document.getElementById('form-productName').value,
                 productImages: currentProductImages,
                 primaryImageIndex: primaryImageIndex,
-                productImage: currentProductImages.length > 0 ? currentProductImages[primaryImageIndex] : "", // للتوافق القديم والسهولة
+                productImage: currentProductImages.length > 0 ? currentProductImages[primaryImageIndex] : "",
                 quantity: document.getElementById('form-quantity').value,
                 wholesalePrice: document.getElementById('form-wholesalePrice').value,
                 shippingCost: document.getElementById('form-shippingCost').value,
@@ -881,9 +983,17 @@
             };
 
             if(editingId) {
+                const oldP = purchases.find(p => p.id === editingId);
+                // الحفاظ على المخزون الأساسي عند التعديل، وتصحيحه إذا تم إنقاص الإجمالي
+                formData.initialQuantity = oldP.initialQuantity || oldP.quantity;
+                if (Number(formData.quantity) < Number(formData.initialQuantity)) {
+                    formData.initialQuantity = formData.quantity;
+                }
+                
                 const index = purchases.findIndex(p => p.id === editingId);
                 if(index !== -1) purchases[index] = formData;
             } else {
+                formData.initialQuantity = formData.quantity; // تعيين المخزون الأساسي للمرة الأولى
                 purchases.unshift(formData);
             }
             savePurchases();
@@ -931,7 +1041,6 @@
                 return;
             }
             tbody.innerHTML = filtered.map(p => {
-                // استخدام الصورة الرئيسية إن وجدت
                 const primaryImage = p.productImage || (p.productImages && p.productImages.length > 0 ? p.productImages[p.primaryImageIndex || 0] : null);
                 
                 const imageHtml = primaryImage 
@@ -962,7 +1071,6 @@
         document.getElementById('list-search').addEventListener('input', renderList);
 
         // --- المبيعات والطلبات المسبقة ---
-        // الخصم التلقائي من المخزون لحساب الكمية المتاحة (يحسب المبيعات الفورية + الطلبات المسبقة التي لم تُسلم بعد)
         function getAvailableQuantity(purchaseId) {
             const purchase = purchases.find(p => p.id === purchaseId);
             if(!purchase) return 0;
@@ -1039,7 +1147,6 @@
                 <div onclick="selectProductForSale('${p.id}')" id="grid-item-${p.id}" class="product-card cursor-pointer bg-white border-2 border-gray-100 p-4 rounded-2xl hover:border-emerald-300 hover:shadow-md flex items-center gap-4 relative overflow-hidden transition-all">
                     ${available <= 0 ? '<div class="absolute inset-0 bg-white/70 z-10 flex items-center justify-center backdrop-blur-[2px]"><span class="bg-red-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">نفدت الكمية</span></div>' : ''}
                     
-                    <!-- أيقونة الاختيار (تظهر عند التحديد) -->
                     <div class="selection-check absolute top-4 left-4 bg-emerald-500 text-white rounded-full p-1 opacity-0 transform scale-50 transition-all">
                         <i data-lucide="check" class="w-4 h-4"></i>
                     </div>
@@ -1068,7 +1175,6 @@
             const purchase = purchases.find(p => p.id === id);
             if(!purchase) return;
 
-            // تحديث تصميم الشبكة المرئية
             document.querySelectorAll('.product-card').forEach(el => el.classList.remove('selected'));
             const selectedItem = document.getElementById(`grid-item-${id}`);
             if(selectedItem) selectedItem.classList.add('selected');
@@ -1087,20 +1193,18 @@
             const saleQtyElement = document.getElementById('sale-qty');
             if (saleQtyElement) {
                 saleQtyElement.max = available;
-                saleQtyElement.value = 1; // تعيين الكمية لـ 1 تلقائياً
+                saleQtyElement.value = 1; 
             }
             
-            // تعبئة الأسعار التلقائية
             const salePriceElement = document.getElementById('sale-price');
             if (salePriceElement) salePriceElement.value = purchase.sellingPrice || '';
             
             const preorderQtyElement = document.getElementById('preorder-qty');
-            if (preorderQtyElement) preorderQtyElement.value = 1; // تعيين الكمية لـ 1 تلقائياً
+            if (preorderQtyElement) preorderQtyElement.value = 1; 
 
             const preorderPriceElement = document.getElementById('preorder-price');
             if (preorderPriceElement) preorderPriceElement.value = purchase.sellingPrice || '';
             
-            // وضع اسم المنتج في الطلب المسبق
             const preorderProductElement = document.getElementById('preorder-product');
             if (preorderProductElement) preorderProductElement.value = purchase.productName;
 
@@ -1136,7 +1240,6 @@
                     document.getElementById('sale-summary').classList.add('hidden');
                 }
             } else {
-                // حسابات الطلب المسبق
                 const qty = Number(document.getElementById('preorder-qty').value) || 0;
                 const price = Number(document.getElementById('preorder-price').value) || 0;
                 const totalAmount = qty * price;
@@ -1218,7 +1321,7 @@
                     sellingPrice: price,
                     totalAmount: qty * price,
                     deliveryDate: date,
-                    status: 'pending' // 'pending' or 'delivered'
+                    status: 'pending' 
                 };
 
                 preorders.unshift(preorder);
@@ -1259,6 +1362,52 @@
                 sales = sales.filter(s => s.id !== id);
                 saveSales();
                 renderSalesList();
+            }
+        };
+
+        // --- إدارة زيادة المخزون (Restock) ---
+        let productToRestock = null;
+
+        window.openRestockModal = function(id) {
+            productToRestock = id;
+            document.getElementById('restock-qty-input').value = '';
+            document.getElementById('restock-cost-input').value = '';
+            document.getElementById('restock-modal').classList.remove('hidden');
+        };
+
+        window.closeRestockModal = function() {
+            productToRestock = null;
+            document.getElementById('restock-modal').classList.add('hidden');
+        };
+
+        window.confirmRestock = function() {
+            if(!productToRestock) return;
+            const newQty = Number(document.getElementById('restock-qty-input').value);
+            const newCost = Number(document.getElementById('restock-cost-input').value) || 0;
+
+            if (newQty <= 0) {
+                alert('الرجاء إدخال كمية صحيحة');
+                return;
+            }
+
+            const pIndex = purchases.findIndex(p => p.id === productToRestock);
+            if(pIndex > -1) {
+                const p = purchases[pIndex];
+                
+                // حفظ الكمية الأساسية عند أول زيادة لمعرفة تفصيل المبيعات في التقرير
+                p.initialQuantity = p.initialQuantity || p.quantity;
+                
+                p.quantity = Number(p.quantity) + newQty;
+                p.wholesalePrice = Number(p.wholesalePrice) + newCost;
+                
+                const totalCost = Number(p.wholesalePrice) + Number(p.shippingCost || 0) + Number(p.packagingCost || 0);
+                p.costPerItem = totalCost / p.quantity;
+                p.profitPerItem = Number(p.sellingPrice) - p.costPerItem;
+                p.totalProfit = p.profitPerItem * p.quantity;
+
+                savePurchases();
+                closeRestockModal();
+                viewDetails(p.id); 
             }
         };
 
@@ -1304,17 +1453,15 @@
                 productName: preorder.productName,
                 quantity: Number(preorder.quantity),
                 sellingPrice: Number(preorder.sellingPrice),
-                paymentMethod: paymentMethod, // تم أخذها من النافذة المنبثقة
+                paymentMethod: paymentMethod,
                 costPerItem: cost,
                 profit: profitPerItem * Number(preorder.quantity),
                 revenue: Number(preorder.totalAmount)
             };
 
-            // 1. إضافة المبيعات
             sales.unshift(sale);
             saveSales();
 
-            // 2. تحديث حالة الطلب إلى تم التسليم
             preorders[preorderIndex].status = 'delivered';
             savePreorders();
             
@@ -1414,6 +1561,7 @@
             let actualRevenue = 0;
             let actualCash = 0;
             let actualCard = 0;
+            const productSalesMap = {};
             
             sales.forEach(s => {
                 actualProfit += Number(s.profit);
@@ -1424,6 +1572,11 @@
                 } else {
                     actualCash += Number(s.revenue);
                 }
+
+                if(!productSalesMap[s.purchaseId]) {
+                    productSalesMap[s.purchaseId] = 0;
+                }
+                productSalesMap[s.purchaseId] += Number(s.quantity);
             });
 
             let topMerchant = { name: '-', count: 0 };
@@ -1450,13 +1603,39 @@
                 document.getElementById('rep-product').textContent = 'لا توجد بيانات';
                 document.getElementById('rep-product-profit').textContent = '';
             }
+
+            // عرض تفصيل مبيعات المخزون الجديد / القديم
+            const inventorySalesHtml = purchases.map(p => {
+                const totalSold = productSalesMap[p.id] || 0;
+                if (totalSold === 0) return ''; 
+                
+                const initialQty = Number(p.initialQuantity || p.quantity);
+                const soldFromOld = Math.min(totalSold, initialQty);
+                const soldFromNew = Math.max(0, totalSold - initialQty);
+
+                return `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4 font-medium text-gray-800">${p.productName}</td>
+                        <td class="p-4 text-center font-bold">${totalSold}</td>
+                        <td class="p-4 text-center font-bold text-blue-600">${soldFromOld}</td>
+                        <td class="p-4 text-center font-bold text-emerald-600">${soldFromNew}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const tbodyInv = document.getElementById('rep-inventory-sales-tbody');
+            if(inventorySalesHtml.trim() === '') {
+                tbodyInv.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-500">لا توجد مبيعات مسجلة لعرض تفاصيلها.</td></tr>';
+            } else {
+                tbodyInv.innerHTML = inventorySalesHtml;
+            }
+            if (window.lucide) { lucide.createIcons(); }
         }
 
         window.viewDetails = function(id) {
             const p = purchases.find(p => p.id === id);
             if(!p) return;
             
-            // جلب الصور للمنتج (مع دعم البيانات القديمة)
             const images = (p.productImages && p.productImages.length > 0) ? p.productImages : (p.productImage ? [p.productImage] : []);
             const pIndex = p.primaryImageIndex !== undefined ? p.primaryImageIndex : 0;
             
@@ -1469,7 +1648,6 @@
                 detailMainImage.classList.remove('hidden');
                 placeholder.classList.add('hidden');
                 
-                // عرض المصغرات إذا كانت هناك أكثر من صورة
                 if (images.length > 1) {
                     thumbnails.innerHTML = images.map((src, idx) => `
                         <img src="${src}" onclick="document.getElementById('detail-main-image').src='${src}'" class="w-12 h-12 object-cover rounded-lg border-2 cursor-pointer hover:border-emerald-500 ${idx === pIndex ? 'border-emerald-500' : 'border-gray-200'} transition-colors shadow-sm">
@@ -1493,6 +1671,7 @@
             
             const availableQty = getAvailableQuantity(p.id);
             document.getElementById('detail-qty').textContent = availableQty;
+            document.getElementById('detail-total-qty').textContent = p.quantity;
             
             document.getElementById('detail-wholesale').innerHTML = formatRiyal(p.wholesalePrice);
             document.getElementById('detail-shipping').innerHTML = formatRiyal(p.shippingCost || 0);
@@ -1509,6 +1688,7 @@
             tpElem.className = `font-black text-xl ${p.totalProfit >= 0 ? "text-emerald-600" : "text-red-500"}`;
 
             document.getElementById('detail-edit-btn').onclick = () => editPurchase(p.id);
+            document.getElementById('detail-restock-btn').onclick = () => openRestockModal(p.id);
             document.getElementById('detail-delete-btn').onclick = () => {
                 if(deletePurchase(p.id)) { switchView('list'); }
             };
@@ -1529,7 +1709,6 @@
             document.getElementById('form-targetMargin').value = p.targetMargin || '30';
             document.getElementById('form-sellingPrice').value = p.sellingPrice || '';
             
-            // استرجاع الصور (مع التوافق مع الأنظمة السابقة)
             if (p.productImages && p.productImages.length > 0) {
                 currentProductImages = [...p.productImages];
                 primaryImageIndex = p.primaryImageIndex !== undefined ? p.primaryImageIndex : 0;

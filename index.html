@@ -403,7 +403,7 @@
 
                     <!-- حقول البيع الفوري -->
                     <div id="direct-sale-fields" class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">الكمية المباعة * <span id="sale-available-qty" class="text-emerald-600 font-bold text-xs ml-2"></span></label>
                                 <input type="number" id="sale-qty" min="1" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
@@ -418,6 +418,20 @@
                                     <option value="cash">كاش 💵</option>
                                     <option value="card">شبكة 💳</option>
                                 </select>
+                            </div>
+                            
+                            <!-- حاسبة الكاش للبيع الفوري -->
+                            <div id="direct-sale-cash-calc-wrapper" class="md:col-span-3 hidden">
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex flex-col md:flex-row gap-4 items-center">
+                                    <div class="w-full md:w-1/2">
+                                        <label class="block text-sm font-medium text-emerald-800 mb-2">المبلغ المستلم من العميل (كاش)</label>
+                                        <input type="number" id="sale-amount-paid" min="0" step="0.01" placeholder="أدخل المبلغ المستلم..." class="w-full p-3 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white text-lg font-bold text-emerald-700">
+                                    </div>
+                                    <div class="w-full md:w-1/2 flex justify-between items-center bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+                                        <span class="font-bold text-gray-600">المتبقي للعميل (الباقي):</span>
+                                        <span id="sale-change-amount" class="text-2xl font-black text-emerald-600">0.00 ريال</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -461,9 +475,31 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">سعر البيع للقطعة المتفق عليه *</label>
                                 <input type="number" id="preorder-price" min="0" step="0.01" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
                             </div>
-                            <div class="md:col-span-2">
+                            <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">موعد التسليم التقريبي *</label>
                                 <input type="date" id="preorder-date" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-right bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">طريقة الدفع *</label>
+                                <select id="preorder-payment-method" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                    <option value="cash">كاش (دفع مقدماً) 💵</option>
+                                    <option value="card">شبكة (دفع مقدماً) 💳</option>
+                                    <option value="postpaid" selected>الدفع عند التسليم ⏳</option>
+                                </select>
+                            </div>
+                            
+                            <!-- حاسبة الكاش للطلب المسبق -->
+                            <div id="preorder-cash-calc-wrapper" class="md:col-span-2 hidden">
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex flex-col md:flex-row gap-4 items-center">
+                                    <div class="w-full md:w-1/2">
+                                        <label class="block text-sm font-medium text-emerald-800 mb-2">المبلغ المستلم من العميل (كاش)</label>
+                                        <input type="number" id="preorder-amount-paid" min="0" step="0.01" placeholder="أدخل المبلغ..." class="w-full p-3 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white text-lg font-bold text-emerald-700">
+                                    </div>
+                                    <div class="w-full md:w-1/2 flex justify-between items-center bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+                                        <span class="font-bold text-gray-600">المتبقي للعميل (الباقي):</span>
+                                        <span id="preorder-change-amount" class="text-2xl font-black text-emerald-600">0.00 ريال</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -658,14 +694,33 @@
                         <i data-lucide="check-circle" class="text-emerald-600 w-5 h-5"></i> تأكيد تسليم الطلب المسبق
                     </h3>
                     <p class="text-sm text-gray-600 mb-4">يرجى تحديد طريقة دفع العميل لإكمال عملية التسليم وإضافتها لسجل المبيعات والأرباح.</p>
-                    <div class="mb-6">
+                    <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">طريقة الدفع *</label>
-                        <select id="delivery-payment-method" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                        <select id="delivery-payment-method" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white" onchange="calculateDeliveryChange()">
                             <option value="cash">كاش 💵</option>
                             <option value="card">شبكة 💳</option>
                         </select>
                     </div>
-                    <div class="flex gap-3 justify-end">
+                    
+                    <!-- حاسبة الكاش لعملية التسليم -->
+                    <div id="delivery-cash-calc-wrapper" class="hidden mb-4">
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-600">المبلغ المطلوب:</span>
+                                <span id="delivery-total-required" class="text-lg font-black text-blue-600">0.00 ريال</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-800 mb-1">المبلغ المستلم (كاش)</label>
+                                <input type="number" id="delivery-amount-paid" oninput="calculateDeliveryChange()" min="0" step="0.01" placeholder="أدخل المبلغ المستلم..." class="w-full p-2 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none bg-white font-bold text-emerald-700">
+                            </div>
+                            <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100 shadow-sm">
+                                <span class="text-sm font-medium text-gray-500">المتبقي للعميل:</span>
+                                <span id="delivery-change-amount" class="text-lg font-black text-emerald-600">0.00 ريال</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 justify-end mt-6">
                         <button onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-50 font-medium transition-colors">إلغاء</button>
                         <button onclick="confirmDelivery()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-md">تأكيد التسليم</button>
                     </div>
@@ -805,7 +860,7 @@
         });
 
         document.getElementById('form-product-image').addEventListener('click', function(e) {
-            e.target.value = null; // تفريغ الحقل قبل الاختيار ليتمكن من اختيار نفس الصورة أو تفعيل الكاميرا بسلاسة
+            e.target.value = null; 
         });
 
         document.getElementById('form-product-image').addEventListener('change', function(e) {
@@ -951,7 +1006,8 @@
         }
 
         ['form-quantity', 'form-wholesalePrice', 'form-shippingCost', 'form-packagingCost', 'form-targetMargin', 'form-sellingPrice'].forEach(id => {
-            document.getElementById(id).addEventListener('input', calculateForm);
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', calculateForm);
         });
 
         window.applySuggestedPrice = function() {
@@ -984,7 +1040,6 @@
 
             if(editingId) {
                 const oldP = purchases.find(p => p.id === editingId);
-                // الحفاظ على المخزون الأساسي عند التعديل، وتصحيحه إذا تم إنقاص الإجمالي
                 formData.initialQuantity = oldP.initialQuantity || oldP.quantity;
                 if (Number(formData.quantity) < Number(formData.initialQuantity)) {
                     formData.initialQuantity = formData.quantity;
@@ -993,7 +1048,7 @@
                 const index = purchases.findIndex(p => p.id === editingId);
                 if(index !== -1) purchases[index] = formData;
             } else {
-                formData.initialQuantity = formData.quantity; // تعيين المخزون الأساسي للمرة الأولى
+                formData.initialQuantity = formData.quantity; 
                 purchases.unshift(formData);
             }
             savePurchases();
@@ -1102,6 +1157,7 @@
                 document.getElementById('preorder-qty').required = false;
                 document.getElementById('preorder-price').required = false;
                 document.getElementById('preorder-date').required = false;
+                document.getElementById('preorder-payment-method').required = false;
             } else {
                 tabPreorder.className = "flex-1 py-2 rounded-lg bg-white shadow text-emerald-700 font-bold transition-all";
                 tabDirect.className = "flex-1 py-2 rounded-lg text-gray-500 hover:text-emerald-700 font-medium transition-all";
@@ -1117,6 +1173,7 @@
                 document.getElementById('preorder-qty').required = true;
                 document.getElementById('preorder-price').required = true;
                 document.getElementById('preorder-date').required = true;
+                document.getElementById('preorder-payment-method').required = true;
             }
             calculateSale();
         };
@@ -1129,6 +1186,11 @@
             document.getElementById('sale-form').reset();
             document.getElementById('sale-summary').classList.add('hidden');
             document.getElementById('preorder-summary').classList.add('hidden');
+            
+            // إخفاء حاسبات الكاش عند التصفير
+            document.getElementById('direct-sale-cash-calc-wrapper').classList.add('hidden');
+            document.getElementById('preorder-cash-calc-wrapper').classList.add('hidden');
+
             document.getElementById('sale-available-qty').textContent = '';
 
             if(purchases.length === 0) {
@@ -1208,6 +1270,12 @@
             const preorderProductElement = document.getElementById('preorder-product');
             if (preorderProductElement) preorderProductElement.value = purchase.productName;
 
+            // Reset amount paid inputs
+            const saleAmountPaid = document.getElementById('sale-amount-paid');
+            if(saleAmountPaid) saleAmountPaid.value = '';
+            const preorderAmountPaid = document.getElementById('preorder-amount-paid');
+            if(preorderAmountPaid) preorderAmountPaid.value = '';
+
             calculateSale();
         };
 
@@ -1218,9 +1286,23 @@
             if (saleMode === 'direct') {
                 const qty = Number(document.getElementById('sale-qty').value) || 0;
                 const price = Number(document.getElementById('sale-price').value) || 0;
+                const paymentMethod = document.getElementById('sale-payment-method').value;
                 const profitPerItem = price - cost;
                 const totalProfit = profitPerItem * qty;
                 const totalPrice = price * qty; 
+
+                // حاسبة الكاش للبيع الفوري
+                const cashCalcWrapper = document.getElementById('direct-sale-cash-calc-wrapper');
+                if(paymentMethod === 'cash') {
+                    cashCalcWrapper.classList.remove('hidden');
+                    const amountPaid = Number(document.getElementById('sale-amount-paid').value) || 0;
+                    let change = amountPaid - totalPrice;
+                    if(amountPaid === 0) change = 0; // لا نظهر المتبقي بالسالب إذا لم يكتب شيئاً
+                    const changeEl = document.getElementById('sale-change-amount');
+                    if(changeEl) changeEl.innerHTML = formatRiyal(change > 0 ? change : 0);
+                } else {
+                    cashCalcWrapper.classList.add('hidden');
+                }
 
                 if (qty > 0 && price > 0) {
                     document.getElementById('sale-summary').classList.remove('hidden');
@@ -1240,10 +1322,25 @@
                     document.getElementById('sale-summary').classList.add('hidden');
                 }
             } else {
+                // حسابات الطلب المسبق
                 const qty = Number(document.getElementById('preorder-qty').value) || 0;
                 const price = Number(document.getElementById('preorder-price').value) || 0;
+                const paymentMethod = document.getElementById('preorder-payment-method').value;
                 const totalAmount = qty * price;
                 
+                // حاسبة الكاش للطلب المسبق
+                const preorderCashCalcWrapper = document.getElementById('preorder-cash-calc-wrapper');
+                if(paymentMethod === 'cash') {
+                    preorderCashCalcWrapper.classList.remove('hidden');
+                    const amountPaid = Number(document.getElementById('preorder-amount-paid').value) || 0;
+                    let change = amountPaid - totalAmount;
+                    if(amountPaid === 0) change = 0;
+                    const changeEl = document.getElementById('preorder-change-amount');
+                    if(changeEl) changeEl.innerHTML = formatRiyal(change > 0 ? change : 0);
+                } else {
+                    preorderCashCalcWrapper.classList.add('hidden');
+                }
+
                 if (qty > 0 && price > 0) {
                     document.getElementById('preorder-summary').classList.remove('hidden');
                     document.getElementById('preorder-total-label').innerHTML = formatRiyal(totalAmount);
@@ -1253,9 +1350,16 @@
             }
         }
 
-        ['sale-qty', 'sale-price', 'preorder-qty', 'preorder-price'].forEach(id => {
+        ['sale-qty', 'sale-price', 'sale-payment-method', 'sale-amount-paid', 
+         'preorder-qty', 'preorder-price', 'preorder-payment-method', 'preorder-amount-paid'].forEach(id => {
             const el = document.getElementById(id);
-            if(el) el.addEventListener('input', calculateSale);
+            if(el) {
+                if(el.tagName === 'SELECT') {
+                    el.addEventListener('change', calculateSale);
+                } else {
+                    el.addEventListener('input', calculateSale);
+                }
+            }
         });
 
         document.getElementById('sale-form').addEventListener('submit', (e) => {
@@ -1304,6 +1408,7 @@
                 const productDisplay = document.getElementById('preorder-product').value;
                 const qty = Number(document.getElementById('preorder-qty').value);
                 const price = Number(document.getElementById('preorder-price').value);
+                const paymentMethod = document.getElementById('preorder-payment-method').value;
                 const date = document.getElementById('preorder-date').value;
 
                 if(qty > available) {
@@ -1319,6 +1424,7 @@
                     productName: productDisplay,
                     quantity: qty,
                     sellingPrice: price,
+                    paymentMethod: paymentMethod, // لتذكره لاحقاً في نافذة التسليم
                     totalAmount: qty * price,
                     deliveryDate: date,
                     status: 'pending' 
@@ -1394,9 +1500,7 @@
             if(pIndex > -1) {
                 const p = purchases[pIndex];
                 
-                // حفظ الكمية الأساسية عند أول زيادة لمعرفة تفصيل المبيعات في التقرير
                 p.initialQuantity = p.initialQuantity || p.quantity;
-                
                 p.quantity = Number(p.quantity) + newQty;
                 p.wholesalePrice = Number(p.wholesalePrice) + newCost;
                 
@@ -1414,8 +1518,41 @@
         // --- إدارة تسليم الطلبات المسبقة ونافذة التأكيد Modal ---
         let preorderToDeliver = null;
 
+        window.calculateDeliveryChange = function() {
+            if(!preorderToDeliver) return;
+            const preorderIndex = preorders.findIndex(p => p.id === preorderToDeliver);
+            if(preorderIndex === -1) return;
+            const preorder = preorders[preorderIndex];
+            
+            const method = document.getElementById('delivery-payment-method').value;
+            const cashCalc = document.getElementById('delivery-cash-calc-wrapper');
+            
+            document.getElementById('delivery-total-required').innerHTML = formatRiyal(preorder.totalAmount);
+
+            if(method === 'cash') {
+                cashCalc.classList.remove('hidden');
+                const amountPaid = Number(document.getElementById('delivery-amount-paid').value) || 0;
+                let change = amountPaid - preorder.totalAmount;
+                document.getElementById('delivery-change-amount').innerHTML = formatRiyal(change > 0 ? change : 0);
+            } else {
+                cashCalc.classList.add('hidden');
+            }
+        };
+
         window.openDeliveryModal = function(id) {
             preorderToDeliver = id;
+            const preorder = preorders.find(p => p.id === id);
+            
+            // تهيئة طريقة الدفع في النافذة بناءً على ما اختاره عند تسجيل الطلب المسبق (إذا لم يكن مؤجلاً)
+            let initialMethod = 'cash';
+            if(preorder.paymentMethod && preorder.paymentMethod !== 'postpaid') {
+                initialMethod = preorder.paymentMethod;
+            }
+            
+            document.getElementById('delivery-payment-method').value = initialMethod;
+            document.getElementById('delivery-amount-paid').value = '';
+            
+            calculateDeliveryChange();
             document.getElementById('delivery-modal').classList.remove('hidden');
         };
 
@@ -1453,7 +1590,7 @@
                 productName: preorder.productName,
                 quantity: Number(preorder.quantity),
                 sellingPrice: Number(preorder.sellingPrice),
-                paymentMethod: paymentMethod,
+                paymentMethod: paymentMethod, 
                 costPerItem: cost,
                 profit: profitPerItem * Number(preorder.quantity),
                 revenue: Number(preorder.totalAmount)
